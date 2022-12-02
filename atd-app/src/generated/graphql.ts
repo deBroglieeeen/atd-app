@@ -63,12 +63,26 @@ export type String_Comparison_Exp = {
 /** columns and relationships of "attendance" */
 export type Attendance = {
   __typename?: 'attendance';
-  end_time: Scalars['timestamptz'];
+  end_time?: Maybe<Scalars['timestamptz']>;
   id: Scalars['uuid'];
   start_time: Scalars['timestamptz'];
   /** An object relationship */
   user: Users;
   user_id: Scalars['String'];
+};
+
+/** order by aggregate values of table "attendance" */
+export type Attendance_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Attendance_Max_Order_By>;
+  min?: InputMaybe<Attendance_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "attendance" */
+export type Attendance_Arr_Rel_Insert_Input = {
+  data: Array<Attendance_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Attendance_On_Conflict>;
 };
 
 /** Boolean expression to filter rows from the table "attendance". All fields are combined with a logical 'AND'. */
@@ -93,6 +107,22 @@ export type Attendance_Insert_Input = {
   end_time?: InputMaybe<Scalars['timestamptz']>;
   start_time?: InputMaybe<Scalars['timestamptz']>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+};
+
+/** order by max() on columns of table "attendance" */
+export type Attendance_Max_Order_By = {
+  end_time?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  start_time?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** order by min() on columns of table "attendance" */
+export type Attendance_Min_Order_By = {
+  end_time?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  start_time?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "attendance" */
@@ -416,10 +446,22 @@ export type Timestamptz_Comparison_Exp = {
 /** columns and relationships of "users" */
 export type Users = {
   __typename?: 'users';
+  /** An array relationship */
+  attendances: Array<Attendance>;
   created_at: Scalars['timestamptz'];
   id: Scalars['String'];
   is_host: Scalars['Boolean'];
   name: Scalars['String'];
+};
+
+
+/** columns and relationships of "users" */
+export type UsersAttendancesArgs = {
+  distinct_on?: InputMaybe<Array<Attendance_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Attendance_Order_By>>;
+  where?: InputMaybe<Attendance_Bool_Exp>;
 };
 
 /** Boolean expression to filter rows from the table "users". All fields are combined with a logical 'AND'. */
@@ -427,6 +469,7 @@ export type Users_Bool_Exp = {
   _and?: InputMaybe<Array<Users_Bool_Exp>>;
   _not?: InputMaybe<Users_Bool_Exp>;
   _or?: InputMaybe<Array<Users_Bool_Exp>>;
+  attendances?: InputMaybe<Attendance_Bool_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<String_Comparison_Exp>;
   is_host?: InputMaybe<Boolean_Comparison_Exp>;
@@ -440,6 +483,7 @@ export type Users_Constraint =
 
 /** input type for inserting data into table "users" */
 export type Users_Insert_Input = {
+  attendances?: InputMaybe<Attendance_Arr_Rel_Insert_Input>;
   id?: InputMaybe<Scalars['String']>;
   is_host?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
@@ -470,6 +514,7 @@ export type Users_On_Conflict = {
 
 /** Ordering options when selecting data from "users". */
 export type Users_Order_By = {
+  attendances_aggregate?: InputMaybe<Attendance_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   is_host?: InputMaybe<Order_By>;
@@ -540,6 +585,13 @@ export type Uuid_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['uuid']>>;
 };
 
+export type AddClockinMutationVariables = Exact<{
+  startTime: Scalars['timestamptz'];
+}>;
+
+
+export type AddClockinMutation = { __typename?: 'mutation_root', insert_attendance_one?: { __typename: 'attendance', id: any, user_id: string } | null };
+
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -567,11 +619,8 @@ export default {
           {
             "name": "end_time",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+              "kind": "SCALAR",
+              "name": "Any"
             },
             "args": []
           },
@@ -1452,6 +1501,72 @@ export default {
         "kind": "OBJECT",
         "name": "users",
         "fields": [
+          {
+            "name": "attendances",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "attendance",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "distinct_on",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "limit",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "offset",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "order_by",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "where",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
           {
             "name": "created_at",
             "type": {

@@ -15,7 +15,7 @@ const Home: NextPage = () => {
   const { user, isAuthenticated, loginWithRedirect } = useAuth0();
 
   useEffect(() => {
-    if (user === null) {
+    if (!isAuthenticated) {
       loginWithRedirect();
     }
     const timer = setInterval(() => {
@@ -23,7 +23,7 @@ const Home: NextPage = () => {
       setNowtime(now);
     }, 1000);
     return () => clearInterval(timer);
-  }, [isAuthenticated, loginWithRedirect]);
+  }, []);
 
   return (
     <>

@@ -1,0 +1,40 @@
+{
+  "name": "atd-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "codegen": "graphql-codegen --config codegen.yml --require dotenv/config"
+  },
+  "dependencies": {
+    "@auth0/auth0-react": "^1.12.0",
+    "@chakra-ui/react": "^2.4.1",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@types/node": "18.11.9",
+    "@types/react": "18.0.25",
+    "@types/react-dom": "18.0.8",
+    "dayjs": "^1.11.6",
+    "eslint": "8.27.0",
+    "eslint-config-next": "13.0.2",
+    "framer-motion": "^7.6.9",
+    "graphql": "^16.6.0",
+    "next": "13.0.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "4.8.4",
+    "urql": "^3.0.3"
+  },
+  "$comment": "dependenciesを消去したが、公開するのであれば必要か",
+  "devDependencies": {
+    "@graphql-codegen/cli": "^2.14.1",
+    "@graphql-codegen/introspection": "^2.2.1",
+    "@graphql-codegen/typescript": "^2.8.2",
+    "@graphql-codegen/typescript-operations": "^2.5.7",
+    "@graphql-codegen/typescript-urql": "^3.7.3",
+    "@graphql-codegen/urql-introspection": "^2.2.1"
+  }
+}

@@ -2,10 +2,10 @@ import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { dayjs } from "../src/lib/dayjs";
 import { Box, Button, Text, Toast } from "@chakra-ui/react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0, User } from "@auth0/auth0-react";
 import {
-  AddClockinMutation,
-  AddClockinMutationVariables,
+  AddClockinMutationMutation,
+  AddClockinMutationMutationVariables,
 } from "../src/generated/graphql";
 import { addClockinMutation } from "../src/graphql/attendance";
 import { useMutation } from "urql";
@@ -17,34 +17,37 @@ const Home: NextPage = () => {
   const [endTime, setEndTime] = useState("");
   const [restStart, setRestStart] = useState("");
   const [restEnd, setRestEnd] = useState("");
-  const { user, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [addClockinResult, addClockin] = useMutation<
-    AddClockinMutation,
-    AddClockinMutationVariables
+    AddClockinMutationMutation,
+    AddClockinMutationMutationVariables
   >(addClockinMutation);
 
   useEffect(() => {
     if (user === null) {
       loginWithRedirect();
     }
+    console.log("id:", user?.sub);
+    console.log("name:", user?.name);
     const timer = setInterval(() => {
       const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
       setNowtime(now);
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isAuthenticated, loginWithRedirect]);
 
   const clickClockin = async () => {
-    setStartTime(nowTime);
+    // setStartTime(nowTime);
     if (!isAuthenticated) {
       loginWithRedirect();
       return;
     }
     try {
+      setStartTime(nowTime);
       const addClockinResult = await addClockin({
-        startTime: "2016-07-20T17:30:15+05:30",
+        startTime: startTime,
       });
-      console.log(addClockinResult);
+      console.log(addClockinResult.data);
       if (addClockinResult.error) {
         throw new Error(addClockinResult.error.message);
       }
@@ -63,6 +66,17 @@ const Home: NextPage = () => {
 
   return (
     <>
+      {!isAuthenticated ? (
+        <Button onClick={loginWithRedirect}>Log in</Button>
+      ) : (
+        <Button
+          onClick={() => {
+            logout({ returnTo: window.location.origin });
+          }}
+        >
+          Log out
+        </Button>
+      )}
       <Text>atd app</Text>
       <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
       <Box>

@@ -1,13 +1,13 @@
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
-import { dayjs } from "../src/lib/dayjs";
+import { dayjs } from "../lib/dayjs";
 import { Box, Button, Text, Toast } from "@chakra-ui/react";
 import { useAuth0, User } from "@auth0/auth0-react";
 import {
   AddClockinMutationMutation,
   AddClockinMutationMutationVariables,
-} from "../src/generated/graphql";
-import { addClockinMutation } from "../src/graphql/attendance";
+} from "../generated/graphql";
+import { addClockinMutation } from "../graphql/attendance";
 import { useMutation } from "urql";
 
 const Home: NextPage = () => {

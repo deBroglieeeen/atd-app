@@ -15,7 +15,7 @@ type Props = {
   children: React.ReactNode;
 }
 
-const AuthorizedUrqlProvider: React.FC = ({ Props }) => {
+const AuthorizedUrqlProvider: React.FC<Props> = ({ children }) => {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
   const fetchOptionsExchange =
@@ -61,7 +61,7 @@ const AuthorizedUrqlProvider: React.FC = ({ Props }) => {
     ],
   });
 
-  return <Provider value={client}>{Props.children}</Provider>;
+  return <Provider value={client}>{children}</Provider>;
 };
 
 export { AuthorizedUrqlProvider };

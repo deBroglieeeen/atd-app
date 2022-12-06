@@ -6,8 +6,18 @@ import { useAuth0, User } from "@auth0/auth0-react";
 import {
   AddClockinMutationMutation,
   AddClockinMutationMutationVariables,
+  AddClockoutMutationMutation,
+  AddClockoutMutationMutationVariables,
+  AddRestinMutationMutation,
+  AddRestinMutationMutationVariables,
+  AddRestoutMutationMutation,
+  AddRestoutMutationMutationVariables,
 } from "../src/generated/graphql";
-import { addClockinMutation } from "../src/graphql/attendance";
+import {
+  addClockinMutation,
+  addClockoutMutation,
+} from "../src/graphql/attendance";
+import { addRestinMutation, addRestoutMutation } from "../src/graphql/rest";
 import { useMutation } from "urql";
 
 const Home: NextPage = () => {
@@ -22,6 +32,18 @@ const Home: NextPage = () => {
     AddClockinMutationMutation,
     AddClockinMutationMutationVariables
   >(addClockinMutation);
+  const [addClockoutResult, addClockout] = useMutation<
+    AddClockoutMutationMutation,
+    AddClockoutMutationMutationVariables
+  >(addClockoutMutation);
+  const [addRestinResult, addRestin] = useMutation<
+    AddRestinMutationMutation,
+    AddRestinMutationMutationVariables
+  >(addRestinMutation);
+  const [addRestoutResult, addRestout] = useMutation<
+    AddRestoutMutationMutation,
+    AddRestoutMutationMutationVariables
+  >(addRestoutMutation);
 
   useEffect(() => {
     if (user === null) {
@@ -43,13 +65,94 @@ const Home: NextPage = () => {
       return;
     }
     try {
-      setStartTime(nowTime);
       const addClockinResult = await addClockin({
-        startTime: startTime,
+        startTime: nowTime,
       });
-      console.log(addClockinResult.data);
+      setStartTime(nowTime);
+      console.log(addClockinResult.data?.insert_attendance_one);
       if (addClockinResult.error) {
         throw new Error(addClockinResult.error.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        description: "エラーが発生しました",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+  };
+
+  const clickClockout = async () => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
+    try {
+      const addClockoutResult = await addClockout({
+        endTime: nowTime,
+      });
+      setEndTime(nowTime);
+      console.log(addClockoutResult.data?.insert_attendance_one);
+      if (addClockoutResult.error) {
+        throw new Error(addClockoutResult.error.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        description: "エラーが発生しました",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+  };
+
+  const clickRestin = async () => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
+    try {
+      const addRestinResult = await addRestin({
+        startRest: nowTime,
+      });
+      setRestStart(nowTime);
+      console.log(addRestinResult.data?.insert_rest_one);
+      if (addRestinResult.error) {
+        throw new Error(addRestinResult.error.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        description: "エラーが発生しました",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+  };
+
+  const clickRestout = async () => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
+    try {
+      const addRestoutResult = await addRestout({
+        endRest: nowTime,
+      });
+      setRestEnd(nowTime);
+      console.log(addRestoutResult.data?.insert_rest_one);
+      if (addRestoutResult.error) {
+        throw new Error(addRestoutResult.error.message);
       }
     } catch (error) {
       console.error(error);
@@ -87,9 +190,9 @@ const Home: NextPage = () => {
       </Box>
 
       <Button onClick={clickClockin}>出勤</Button>
-      <Button onClick={() => setEndTime(nowTime)}>退勤</Button>
-      <Button onClick={() => setRestStart(nowTime)}>休憩</Button>
-      <Button onClick={() => setRestEnd(nowTime)}>戻り</Button>
+      <Button onClick={clickClockout}>退勤</Button>
+      <Button onClick={clickRestin}>休憩</Button>
+      <Button onClick={clickRestout}>戻り</Button>
       <Box>{user ? `(ユーザー:${user?.name}${user.sub})` : null}</Box>
     </>
   );

@@ -65,7 +65,7 @@ export type Attendance = {
   __typename?: 'attendance';
   end_time?: Maybe<Scalars['timestamptz']>;
   id: Scalars['uuid'];
-  start_time: Scalars['timestamptz'];
+  start_time?: Maybe<Scalars['timestamptz']>;
   /** An object relationship */
   user: Users;
   user_id: Scalars['String'];
@@ -383,9 +383,9 @@ export type Query_RootUsers_By_PkArgs = {
 /** columns and relationships of "rest" */
 export type Rest = {
   __typename?: 'rest';
-  end_rest: Scalars['timestamptz'];
+  end_rest?: Maybe<Scalars['timestamptz']>;
   id: Scalars['uuid'];
-  start_rest: Scalars['timestamptz'];
+  start_rest?: Maybe<Scalars['timestamptz']>;
   /** An object relationship */
   user: Users;
   user_id: Scalars['String'];
@@ -703,6 +703,27 @@ export type AddClockinMutationMutationVariables = Exact<{
 
 export type AddClockinMutationMutation = { __typename?: 'mutation_root', insert_attendance_one?: { __typename?: 'attendance', id: any } | null };
 
+export type AddClockoutMutationMutationVariables = Exact<{
+  endTime: Scalars['timestamptz'];
+}>;
+
+
+export type AddClockoutMutationMutation = { __typename?: 'mutation_root', insert_attendance_one?: { __typename?: 'attendance', id: any } | null };
+
+export type AddRestinMutationMutationVariables = Exact<{
+  startRest: Scalars['timestamptz'];
+}>;
+
+
+export type AddRestinMutationMutation = { __typename?: 'mutation_root', insert_rest_one?: { __typename?: 'rest', id: any } | null };
+
+export type AddRestoutMutationMutationVariables = Exact<{
+  endRest: Scalars['timestamptz'];
+}>;
+
+
+export type AddRestoutMutationMutation = { __typename?: 'mutation_root', insert_rest_one?: { __typename?: 'rest', id: any } | null };
+
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -749,11 +770,8 @@ export default {
           {
             "name": "start_time",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+              "kind": "SCALAR",
+              "name": "Any"
             },
             "args": []
           },
@@ -1484,11 +1502,8 @@ export default {
           {
             "name": "end_rest",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+              "kind": "SCALAR",
+              "name": "Any"
             },
             "args": []
           },
@@ -1506,11 +1521,8 @@ export default {
           {
             "name": "start_rest",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+              "kind": "SCALAR",
+              "name": "Any"
             },
             "args": []
           },

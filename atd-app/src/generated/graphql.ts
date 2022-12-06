@@ -63,7 +63,7 @@ export type String_Comparison_Exp = {
 /** columns and relationships of "attendance" */
 export type Attendance = {
   __typename?: 'attendance';
-  end_time: Scalars['timestamptz'];
+  end_time?: Maybe<Scalars['timestamptz']>;
   id: Scalars['uuid'];
   start_time: Scalars['timestamptz'];
   /** An object relationship */
@@ -85,6 +85,8 @@ export type Attendance_Bool_Exp = {
 
 /** unique or primary key constraints on table "attendance" */
 export type Attendance_Constraint =
+  /** unique or primary key constraint on columns "id" */
+  | 'attendance_id_key'
   /** unique or primary key constraint on columns "id" */
   | 'attendance_pkey';
 
@@ -189,6 +191,10 @@ export type Mutation_Root = {
   insert_attendance?: Maybe<Attendance_Mutation_Response>;
   /** insert a single row into the table: "attendance" */
   insert_attendance_one?: Maybe<Attendance>;
+  /** insert data into the table: "rest" */
+  insert_rest?: Maybe<Rest_Mutation_Response>;
+  /** insert a single row into the table: "rest" */
+  insert_rest_one?: Maybe<Rest>;
   /** insert data into the table: "users" */
   insert_users?: Maybe<Users_Mutation_Response>;
   /** insert a single row into the table: "users" */
@@ -231,6 +237,20 @@ export type Mutation_RootInsert_AttendanceArgs = {
 export type Mutation_RootInsert_Attendance_OneArgs = {
   object: Attendance_Insert_Input;
   on_conflict?: InputMaybe<Attendance_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_RestArgs = {
+  objects: Array<Rest_Insert_Input>;
+  on_conflict?: InputMaybe<Rest_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Rest_OneArgs = {
+  object: Rest_Insert_Input;
+  on_conflict?: InputMaybe<Rest_On_Conflict>;
 };
 
 
@@ -308,6 +328,10 @@ export type Query_Root = {
   attendance: Array<Attendance>;
   /** fetch data from the table: "attendance" using primary key columns */
   attendance_by_pk?: Maybe<Attendance>;
+  /** fetch data from the table: "rest" */
+  rest: Array<Rest>;
+  /** fetch data from the table: "rest" using primary key columns */
+  rest_by_pk?: Maybe<Rest>;
   /** fetch data from the table: "users" */
   users: Array<Users>;
   /** fetch data from the table: "users" using primary key columns */
@@ -329,6 +353,20 @@ export type Query_RootAttendance_By_PkArgs = {
 };
 
 
+export type Query_RootRestArgs = {
+  distinct_on?: InputMaybe<Array<Rest_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Rest_Order_By>>;
+  where?: InputMaybe<Rest_Bool_Exp>;
+};
+
+
+export type Query_RootRest_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
 export type Query_RootUsersArgs = {
   distinct_on?: InputMaybe<Array<Users_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -342,6 +380,98 @@ export type Query_RootUsers_By_PkArgs = {
   id: Scalars['String'];
 };
 
+/** columns and relationships of "rest" */
+export type Rest = {
+  __typename?: 'rest';
+  end_rest: Scalars['timestamptz'];
+  id: Scalars['uuid'];
+  start_rest: Scalars['timestamptz'];
+  /** An object relationship */
+  user: Users;
+  user_id: Scalars['String'];
+};
+
+/** Boolean expression to filter rows from the table "rest". All fields are combined with a logical 'AND'. */
+export type Rest_Bool_Exp = {
+  _and?: InputMaybe<Array<Rest_Bool_Exp>>;
+  _not?: InputMaybe<Rest_Bool_Exp>;
+  _or?: InputMaybe<Array<Rest_Bool_Exp>>;
+  end_rest?: InputMaybe<Timestamptz_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  start_rest?: InputMaybe<Timestamptz_Comparison_Exp>;
+  user?: InputMaybe<Users_Bool_Exp>;
+  user_id?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "rest" */
+export type Rest_Constraint =
+  /** unique or primary key constraint on columns "id" */
+  | 'rest_pkey';
+
+/** input type for inserting data into table "rest" */
+export type Rest_Insert_Input = {
+  end_rest?: InputMaybe<Scalars['timestamptz']>;
+  start_rest?: InputMaybe<Scalars['timestamptz']>;
+  user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+};
+
+/** response of any mutation on the table "rest" */
+export type Rest_Mutation_Response = {
+  __typename?: 'rest_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Rest>;
+};
+
+/** on_conflict condition type for table "rest" */
+export type Rest_On_Conflict = {
+  constraint: Rest_Constraint;
+  update_columns?: Array<Rest_Update_Column>;
+  where?: InputMaybe<Rest_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "rest". */
+export type Rest_Order_By = {
+  end_rest?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  start_rest?: InputMaybe<Order_By>;
+  user?: InputMaybe<Users_Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "rest" */
+export type Rest_Select_Column =
+  /** column name */
+  | 'end_rest'
+  /** column name */
+  | 'id'
+  /** column name */
+  | 'start_rest'
+  /** column name */
+  | 'user_id';
+
+/** Streaming cursor of the table "rest" */
+export type Rest_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Rest_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Rest_Stream_Cursor_Value_Input = {
+  end_rest?: InputMaybe<Scalars['timestamptz']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  start_rest?: InputMaybe<Scalars['timestamptz']>;
+  user_id?: InputMaybe<Scalars['String']>;
+};
+
+/** placeholder for update columns of table "rest" (current role has no relevant permissions) */
+export type Rest_Update_Column =
+  /** placeholder (do not use) */
+  | '_PLACEHOLDER';
+
 export type Subscription_Root = {
   __typename?: 'subscription_root';
   /** fetch data from the table: "attendance" */
@@ -350,6 +480,12 @@ export type Subscription_Root = {
   attendance_by_pk?: Maybe<Attendance>;
   /** fetch data from the table in a streaming manner: "attendance" */
   attendance_stream: Array<Attendance>;
+  /** fetch data from the table: "rest" */
+  rest: Array<Rest>;
+  /** fetch data from the table: "rest" using primary key columns */
+  rest_by_pk?: Maybe<Rest>;
+  /** fetch data from the table in a streaming manner: "rest" */
+  rest_stream: Array<Rest>;
   /** fetch data from the table: "users" */
   users: Array<Users>;
   /** fetch data from the table: "users" using primary key columns */
@@ -377,6 +513,27 @@ export type Subscription_RootAttendance_StreamArgs = {
   batch_size: Scalars['Int'];
   cursor: Array<InputMaybe<Attendance_Stream_Cursor_Input>>;
   where?: InputMaybe<Attendance_Bool_Exp>;
+};
+
+
+export type Subscription_RootRestArgs = {
+  distinct_on?: InputMaybe<Array<Rest_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Rest_Order_By>>;
+  where?: InputMaybe<Rest_Bool_Exp>;
+};
+
+
+export type Subscription_RootRest_By_PkArgs = {
+  id: Scalars['uuid'];
+};
+
+
+export type Subscription_RootRest_StreamArgs = {
+  batch_size: Scalars['Int'];
+  cursor: Array<InputMaybe<Rest_Stream_Cursor_Input>>;
+  where?: InputMaybe<Rest_Bool_Exp>;
 };
 
 
@@ -418,7 +575,7 @@ export type Users = {
   __typename?: 'users';
   created_at: Scalars['timestamptz'];
   id: Scalars['String'];
-  is_host: Scalars['Boolean'];
+  is_host?: Maybe<Scalars['Boolean']>;
   name: Scalars['String'];
 };
 
@@ -440,7 +597,6 @@ export type Users_Constraint =
 
 /** input type for inserting data into table "users" */
 export type Users_Insert_Input = {
-  id?: InputMaybe<Scalars['String']>;
   is_host?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
 };
@@ -540,12 +696,19 @@ export type Uuid_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['uuid']>>;
 };
 
+export type AddClockinMutationMutationVariables = Exact<{
+  startTime: Scalars['timestamptz'];
+}>;
+
+
+export type AddClockinMutationMutation = { __typename?: 'mutation_root', insert_attendance_one?: { __typename?: 'attendance', id: any } | null };
+
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetUserByIdQuery = { __typename?: 'query_root', users_by_pk?: { __typename: 'users', created_at: any, id: string, name: string, is_host: boolean } | null };
+export type GetUserByIdQuery = { __typename?: 'query_root', users_by_pk?: { __typename: 'users', created_at: any, id: string, name: string, is_host?: boolean | null } | null };
 
 import { IntrospectionQuery } from 'graphql';
 export default {
@@ -567,11 +730,8 @@ export default {
           {
             "name": "end_time",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+              "kind": "SCALAR",
+              "name": "Any"
             },
             "args": []
           },
@@ -741,6 +901,66 @@ export default {
             "type": {
               "kind": "OBJECT",
               "name": "attendance",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "object",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              },
+              {
+                "name": "on_conflict",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "insert_rest",
+            "type": {
+              "kind": "OBJECT",
+              "name": "rest_mutation_response",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "objects",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "Any"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "name": "on_conflict",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "insert_rest_one",
+            "type": {
+              "kind": "OBJECT",
+              "name": "rest",
               "ofType": null
             },
             "args": [
@@ -1083,6 +1303,92 @@ export default {
             ]
           },
           {
+            "name": "rest",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "rest",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "distinct_on",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "limit",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "offset",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "order_by",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "where",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "rest_by_pk",
+            "type": {
+              "kind": "OBJECT",
+              "name": "rest",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "id",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
             "name": "users",
             "type": {
               "kind": "NON_NULL",
@@ -1167,6 +1473,105 @@ export default {
                 }
               }
             ]
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "rest",
+        "fields": [
+          {
+            "name": "end_rest",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "id",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "start_rest",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "user",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "users",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "user_id",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "rest_mutation_response",
+        "fields": [
+          {
+            "name": "affected_rows",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "returning",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "rest",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": []
           }
         ],
         "interfaces": []
@@ -1272,6 +1677,141 @@ export default {
                   "ofType": {
                     "kind": "OBJECT",
                     "name": "attendance",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "batch_size",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              },
+              {
+                "name": "cursor",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "where",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "rest",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "rest",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "distinct_on",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "limit",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "offset",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "order_by",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "where",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "rest_by_pk",
+            "type": {
+              "kind": "OBJECT",
+              "name": "rest",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "id",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "rest_stream",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "rest",
                     "ofType": null
                   }
                 }
@@ -1477,11 +2017,8 @@ export default {
           {
             "name": "is_host",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+              "kind": "SCALAR",
+              "name": "Any"
             },
             "args": []
           },

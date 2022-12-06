@@ -13,7 +13,7 @@ import {
   AUTH0_REDIRECT_URI,
 } from "../src/config/constants";
 
-export default function App({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Auth0Provider
       domain={AUTH0_DOMAIN}
@@ -29,3 +29,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </Auth0Provider>
   );
 }
+
+export default MyApp;

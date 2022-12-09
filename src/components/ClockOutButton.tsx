@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
@@ -14,21 +14,21 @@ type Props = {
   attendanceId: string;
 };
 
-const Clockout = ({ nowTime, setEndTime, attendanceId }: Props) => {
-  const [addClockoutResult, addClockout] = useMutation<
+const ClockOutButton = ({ nowTime, setEndTime, attendanceId }: Props) => {
+  const [updateClockoutResult, updateClockout] = useMutation<
     UpdateClockoutMutationMutation,
     UpdateClockoutMutationMutationVariables
   >(updateClockoutMutation);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
 
-  const clickClockout = async () => {
+  const clickClockOut = async () => {
     if (!isAuthenticated) {
       loginWithRedirect();
       return;
     }
     try {
-      const updateClockoutResult = await addClockout({
+      const updateClockoutResult = await updateClockout({
         attendanceId: attendanceId,
         endTime: nowTime,
       });
@@ -57,7 +57,7 @@ const Clockout = ({ nowTime, setEndTime, attendanceId }: Props) => {
     });
   };
 
-  return <Button onClick={clickClockout}>退勤</Button>;
+  return <Button onClick={clickClockOut}>退勤</Button>;
 };
 
-export { Clockout };
+export { ClockOutButton };

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   AddClockinMutationMutation,
@@ -14,7 +14,7 @@ type Props = {
   setAttendanceId: Dispatch<SetStateAction<string>>;
 };
 
-const Clockin = ({ nowTime, setStartTime, setAttendanceId }: Props) => {
+const ClockInButton = ({ nowTime, setStartTime, setAttendanceId }: Props) => {
   const [addClockinResult, addClockin] = useMutation<
     AddClockinMutationMutation,
     AddClockinMutationMutationVariables
@@ -22,7 +22,7 @@ const Clockin = ({ nowTime, setStartTime, setAttendanceId }: Props) => {
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
 
-  const clickClockin = async () => {
+  const clickClockIn = async () => {
     if (!isAuthenticated) {
       loginWithRedirect();
       return;
@@ -57,7 +57,7 @@ const Clockin = ({ nowTime, setStartTime, setAttendanceId }: Props) => {
     });
   };
 
-  return <Button onClick={clickClockin}>出勤</Button>;
+  return <Button onClick={clickClockIn}>出勤</Button>;
 };
 
-export { Clockin };
+export { ClockInButton };

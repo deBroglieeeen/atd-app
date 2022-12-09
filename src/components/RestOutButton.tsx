@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   UpdateRestoutMutationMutation,
@@ -14,21 +14,21 @@ type Props = {
   restId: string;
 };
 
-const RestOut = ({ nowTime, setEndRest, restId }: Props) => {
-  const [addRestoutResult, addRestout] = useMutation<
+const RestOutButton = ({ nowTime, setEndRest, restId }: Props) => {
+  const [updateRestoutResult, updateRestout] = useMutation<
     UpdateRestoutMutationMutation,
     UpdateRestoutMutationMutationVariables
   >(updateRestoutMutation);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
 
-  const clickRestout = async () => {
+  const clickRestOut = async () => {
     if (!isAuthenticated) {
       loginWithRedirect();
       return;
     }
     try {
-      const updateRestoutResult = await addRestout({
+      const updateRestoutResult = await updateRestout({
         restId: restId,
         endRest: nowTime,
       });
@@ -56,7 +56,7 @@ const RestOut = ({ nowTime, setEndRest, restId }: Props) => {
       position: "top",
     });
   };
-  return <Button onClick={clickRestout}>戻り</Button>;
+  return <Button onClick={clickRestOut}>戻り</Button>;
 };
 
-export { RestOut };
+export { RestOutButton };

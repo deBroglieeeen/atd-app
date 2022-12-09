@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   AddRestinMutationMutation,
@@ -14,7 +14,7 @@ type Props = {
   setRestId: Dispatch<SetStateAction<string>>;
 };
 
-const RestIn = ({ nowTime, setStartRest, setRestId }: Props) => {
+const RestInButton = ({ nowTime, setStartRest, setRestId }: Props) => {
   const [addRestinResult, addRestin] = useMutation<
     AddRestinMutationMutation,
     AddRestinMutationMutationVariables
@@ -22,7 +22,7 @@ const RestIn = ({ nowTime, setStartRest, setRestId }: Props) => {
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
 
-  const clickRestin = async () => {
+  const clickRestIn = async () => {
     if (!isAuthenticated) {
       loginWithRedirect();
       return;
@@ -56,6 +56,6 @@ const RestIn = ({ nowTime, setStartRest, setRestId }: Props) => {
       position: "top",
     });
   };
-  return <Button onClick={clickRestin}>休憩</Button>;
+  return <Button onClick={clickRestIn}>休憩</Button>;
 };
-export { RestIn };
+export { RestInButton };

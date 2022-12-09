@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { dayjs } from "../lib/dayjs";
 import { Box, Button, Text } from "@chakra-ui/react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Clockin } from "../components/Clockin";
-import { Clockout } from "../components/Clockout";
-import { RestIn } from "../components/RestIn";
-import { RestOut } from "../components/RestOut";
+import { ClockInButton } from "../components/ClockInButton";
+import { ClockOutButton } from "../components/ClockOutButton";
+import { RestInButton } from "../components/RestInButton";
+import { RestOutButton } from "../components/RestOutButton";
 
 const Home: NextPage = () => {
   const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
@@ -53,22 +53,26 @@ const Home: NextPage = () => {
         <Text>休憩入り：{`${startRest}`}</Text>
         <Text>休憩戻り：{`${endRest}`}</Text>
       </Box>
-      <Clockin
+      <ClockInButton
         nowTime={nowTime}
         setStartTime={setStartTime}
         setAttendanceId={setAttendanceId}
       />
-      <Clockout
+      <ClockOutButton
         nowTime={nowTime}
         setEndTime={setEndTime}
         attendanceId={attendanceId}
       />
-      <RestIn
+      <RestInButton
         nowTime={nowTime}
         setStartRest={setStartRest}
         setRestId={setRestId}
       />
-      <RestOut nowTime={nowTime} setEndRest={setEndRest} restId={restId} />
+      <RestOutButton
+        nowTime={nowTime}
+        setEndRest={setEndRest}
+        restId={restId}
+      />
       <Box>{user ? `(ユーザー:${user?.name}${user.sub})` : null}</Box>
     </>
   );

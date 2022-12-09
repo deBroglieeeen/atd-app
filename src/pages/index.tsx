@@ -19,19 +19,21 @@ import {
 } from "../graphql/attendance";
 import { addRestinMutation, updateRestoutMutation } from "../graphql/rest";
 import { useMutation } from "urql";
+import { Clockin } from "../components/Clockin";
 
 const Home: NextPage = () => {
   const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [nowTime, setNowtime] = useState(now);
+  const [attendanceId, setAttendanceId] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [restStart, setRestStart] = useState("");
   const [restEnd, setRestEnd] = useState("");
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
-  const [addClockinResult, addClockin] = useMutation<
-    AddClockinMutationMutation,
-    AddClockinMutationMutationVariables
-  >(addClockinMutation);
+  // const [addClockinResult, addClockin] = useMutation<
+  //   AddClockinMutationMutation,
+  //   AddClockinMutationMutationVariables
+  // >(addClockinMutation);
   const [addClockoutResult, addClockout] = useMutation<
     UpdateClockoutMutationMutation,
     UpdateClockoutMutationMutationVariables
@@ -58,34 +60,6 @@ const Home: NextPage = () => {
     return () => clearInterval(timer);
   }, [isAuthenticated, loginWithRedirect]);
 
-  const clickClockin = async () => {
-    // setStartTime(nowTime);
-    if (!isAuthenticated) {
-      loginWithRedirect();
-      return;
-    }
-    try {
-      const addClockinResult = await addClockin({
-        startTime: nowTime,
-      });
-      setStartTime(nowTime);
-      console.log(addClockinResult.data?.insert_attendance_one);
-      if (addClockinResult.error) {
-        throw new Error(addClockinResult.error.message);
-      }
-    } catch (error) {
-      console.error(error);
-      toast({
-        description: "エラーが発生しました",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
-      });
-      return;
-    }
-  };
-
   const clickClockout = async () => {
     if (!isAuthenticated) {
       loginWithRedirect();
@@ -93,7 +67,7 @@ const Home: NextPage = () => {
     }
     try {
       const updateClockoutResult = await addClockout({
-        attendanceId: addClockinResult.data?.insert_attendance_one?.id,
+        attendanceId: attendanceId,
         endTime: nowTime,
       });
       setEndTime(nowTime);
@@ -191,7 +165,11 @@ const Home: NextPage = () => {
         <Text>休憩戻り：{`${restEnd}`}</Text>
       </Box>
 
-      <Button onClick={clickClockin}>出勤</Button>
+      <Clockin
+        nowTime={nowTime}
+        setStartTime={setStartTime}
+        setAttendanceId={setAttendanceId}
+      />
       <Button onClick={clickClockout}>退勤</Button>
       <Button onClick={clickRestin}>休憩</Button>
       <Button onClick={clickRestout}>戻り</Button>

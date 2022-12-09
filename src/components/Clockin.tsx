@@ -1,13 +1,12 @@
-import { NextPage } from "next";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useAuth0, User } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import {
   AddClockinMutationMutation,
   AddClockinMutationMutationVariables,
 } from "../generated/graphql";
 import { addClockinMutation } from "../graphql/attendance";
 import { useMutation } from "urql";
-import { Button } from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
 
 type Props = {
   nowTime: string;
@@ -20,7 +19,8 @@ const Clockin = ({ nowTime, setStartTime, setAttendanceId }: Props) => {
     AddClockinMutationMutation,
     AddClockinMutationMutationVariables
   >(addClockinMutation);
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const toast = useToast();
 
   const clickClockin = async () => {
     if (!isAuthenticated) {
@@ -48,19 +48,16 @@ const Clockin = ({ nowTime, setStartTime, setAttendanceId }: Props) => {
       });
       return;
     }
+    toast({
+      description: "出勤打刻しました。",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+      position: "top",
+    });
   };
 
   return <Button onClick={clickClockin}>出勤</Button>;
 };
 
 export { Clockin };
-
-function toast(arg0: {
-  description: string;
-  status: string;
-  duration: number;
-  isClosable: boolean;
-  position: string;
-}) {
-  throw new Error("Function not implemented.");
-}

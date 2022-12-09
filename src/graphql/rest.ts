@@ -6,10 +6,15 @@ export const addRestinMutation = /* GraphQL */ `
   }
 `;
 
-export const addRestoutMutation = /* GraphQL */ `
-  mutation addRestoutMutation($endRest: timestamptz!) {
-    insert_rest_one(object: { end_rest: $endRest }) {
-      id
+export const updateRestoutMutation = /* GraphQL */ `
+  mutation updateRestoutMutation($restId: uuid!, $endRest: timestamptz!) {
+    update_rest(where: { id: { _eq: $restId } }, _set: { end_rest: $endRest }) {
+      affected_rows
+      returning {
+        user_id
+        end_rest
+        start_rest
+      }
     }
   }
 `;

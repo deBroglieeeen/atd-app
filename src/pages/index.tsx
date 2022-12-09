@@ -6,15 +6,18 @@ import { useAuth0, User } from "@auth0/auth0-react";
 import {
   AddClockinMutationMutation,
   AddClockinMutationMutationVariables,
-  AddClockoutMutationMutation,
-  AddClockoutMutationMutationVariables,
+  UpdateClockoutMutationMutation,
+  UpdateClockoutMutationMutationVariables,
   AddRestinMutationMutation,
   AddRestinMutationMutationVariables,
-  AddRestoutMutationMutation,
-  AddRestoutMutationMutationVariables,
+  UpdateRestoutMutationMutation,
+  UpdateRestoutMutationMutationVariables,
 } from "../generated/graphql";
-import { addClockinMutation, addClockoutMutation } from "../graphql/attendance";
-import { addRestinMutation, addRestoutMutation } from "../graphql/rest";
+import {
+  addClockinMutation,
+  updateClockoutMutation,
+} from "../graphql/attendance";
+import { addRestinMutation, updateRestoutMutation } from "../graphql/rest";
 import { useMutation } from "urql";
 
 const Home: NextPage = () => {
@@ -30,17 +33,17 @@ const Home: NextPage = () => {
     AddClockinMutationMutationVariables
   >(addClockinMutation);
   const [addClockoutResult, addClockout] = useMutation<
-    AddClockoutMutationMutation,
-    AddClockoutMutationMutationVariables
-  >(addClockoutMutation);
+    UpdateClockoutMutationMutation,
+    UpdateClockoutMutationMutationVariables
+  >(updateClockoutMutation);
   const [addRestinResult, addRestin] = useMutation<
     AddRestinMutationMutation,
     AddRestinMutationMutationVariables
   >(addRestinMutation);
   const [addRestoutResult, addRestout] = useMutation<
-    AddRestoutMutationMutation,
-    AddRestoutMutationMutationVariables
-  >(addRestoutMutation);
+    UpdateRestoutMutationMutation,
+    UpdateRestoutMutationMutationVariables
+  >(updateRestoutMutation);
 
   useEffect(() => {
     if (user === null) {
@@ -89,13 +92,14 @@ const Home: NextPage = () => {
       return;
     }
     try {
-      const addClockoutResult = await addClockout({
+      const updateClockoutResult = await addClockout({
+        attendanceId: addClockinResult.data?.insert_attendance_one?.id,
         endTime: nowTime,
       });
       setEndTime(nowTime);
-      console.log(addClockoutResult.data?.insert_attendance_one);
-      if (addClockoutResult.error) {
-        throw new Error(addClockoutResult.error.message);
+      console.log(updateClockoutResult.data?.update_attendance);
+      if (updateClockoutResult.error) {
+        throw new Error(updateClockoutResult.error.message);
       }
     } catch (error) {
       console.error(error);
@@ -143,13 +147,14 @@ const Home: NextPage = () => {
       return;
     }
     try {
-      const addRestoutResult = await addRestout({
+      const updateRestoutResult = await addRestout({
+        restId: addRestinResult.data?.insert_rest_one?.id,
         endRest: nowTime,
       });
       setRestEnd(nowTime);
-      console.log(addRestoutResult.data?.insert_rest_one);
-      if (addRestoutResult.error) {
-        throw new Error(addRestoutResult.error.message);
+      console.log(updateRestoutResult.data?.update_rest);
+      if (updateRestoutResult.error) {
+        throw new Error(updateRestoutResult.error.message);
       }
     } catch (error) {
       console.error(error);

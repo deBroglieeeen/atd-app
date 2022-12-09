@@ -205,6 +205,12 @@ export type Mutation_Root = {
   update_attendance_by_pk?: Maybe<Attendance>;
   /** update multiples rows of table: "attendance" */
   update_attendance_many?: Maybe<Array<Maybe<Attendance_Mutation_Response>>>;
+  /** update data of the table: "rest" */
+  update_rest?: Maybe<Rest_Mutation_Response>;
+  /** update single row of the table: "rest" */
+  update_rest_by_pk?: Maybe<Rest>;
+  /** update multiples rows of table: "rest" */
+  update_rest_many?: Maybe<Array<Maybe<Rest_Mutation_Response>>>;
   /** update data of the table: "users" */
   update_users?: Maybe<Users_Mutation_Response>;
   /** update single row of the table: "users" */
@@ -285,6 +291,26 @@ export type Mutation_RootUpdate_Attendance_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Attendance_ManyArgs = {
   updates: Array<Attendance_Updates>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_RestArgs = {
+  _set?: InputMaybe<Rest_Set_Input>;
+  where: Rest_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Rest_By_PkArgs = {
+  _set?: InputMaybe<Rest_Set_Input>;
+  pk_columns: Rest_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Rest_ManyArgs = {
+  updates: Array<Rest_Updates>;
 };
 
 
@@ -440,6 +466,11 @@ export type Rest_Order_By = {
   user_id?: InputMaybe<Order_By>;
 };
 
+/** primary key columns input for table: rest */
+export type Rest_Pk_Columns_Input = {
+  id: Scalars['uuid'];
+};
+
 /** select columns of table "rest" */
 export type Rest_Select_Column =
   /** column name */
@@ -450,6 +481,12 @@ export type Rest_Select_Column =
   | 'start_rest'
   /** column name */
   | 'user_id';
+
+/** input type for updating data in table "rest" */
+export type Rest_Set_Input = {
+  end_rest?: InputMaybe<Scalars['timestamptz']>;
+  start_rest?: InputMaybe<Scalars['timestamptz']>;
+};
 
 /** Streaming cursor of the table "rest" */
 export type Rest_Stream_Cursor_Input = {
@@ -467,10 +504,18 @@ export type Rest_Stream_Cursor_Value_Input = {
   user_id?: InputMaybe<Scalars['String']>;
 };
 
-/** placeholder for update columns of table "rest" (current role has no relevant permissions) */
+/** update columns of table "rest" */
 export type Rest_Update_Column =
-  /** placeholder (do not use) */
-  | '_PLACEHOLDER';
+  /** column name */
+  | 'end_rest'
+  /** column name */
+  | 'start_rest';
+
+export type Rest_Updates = {
+  /** sets the columns of the filtered rows to the given values */
+  _set?: InputMaybe<Rest_Set_Input>;
+  where: Rest_Bool_Exp;
+};
 
 export type Subscription_Root = {
   __typename?: 'subscription_root';
@@ -703,12 +748,13 @@ export type AddClockinMutationMutationVariables = Exact<{
 
 export type AddClockinMutationMutation = { __typename?: 'mutation_root', insert_attendance_one?: { __typename?: 'attendance', id: any } | null };
 
-export type AddClockoutMutationMutationVariables = Exact<{
+export type UpdateClockoutMutationMutationVariables = Exact<{
+  attendanceId: Scalars['uuid'];
   endTime: Scalars['timestamptz'];
 }>;
 
 
-export type AddClockoutMutationMutation = { __typename?: 'mutation_root', insert_attendance_one?: { __typename?: 'attendance', id: any } | null };
+export type UpdateClockoutMutationMutation = { __typename?: 'mutation_root', update_attendance?: { __typename?: 'attendance_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'attendance', user_id: string, end_time?: any | null, start_time?: any | null }> } | null };
 
 export type AddRestinMutationMutationVariables = Exact<{
   startRest: Scalars['timestamptz'];
@@ -717,12 +763,13 @@ export type AddRestinMutationMutationVariables = Exact<{
 
 export type AddRestinMutationMutation = { __typename?: 'mutation_root', insert_rest_one?: { __typename?: 'rest', id: any } | null };
 
-export type AddRestoutMutationMutationVariables = Exact<{
+export type UpdateRestoutMutationMutationVariables = Exact<{
+  restId: Scalars['uuid'];
   endRest: Scalars['timestamptz'];
 }>;
 
 
-export type AddRestoutMutationMutation = { __typename?: 'mutation_root', insert_rest_one?: { __typename?: 'rest', id: any } | null };
+export type UpdateRestoutMutationMutation = { __typename?: 'mutation_root', update_rest?: { __typename?: 'rest_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'rest', user_id: string, end_rest?: any | null, start_rest?: any | null }> } | null };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -1122,6 +1169,89 @@ export default {
               "ofType": {
                 "kind": "OBJECT",
                 "name": "attendance_mutation_response",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "updates",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "Any"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "update_rest",
+            "type": {
+              "kind": "OBJECT",
+              "name": "rest_mutation_response",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "_set",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "where",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "update_rest_by_pk",
+            "type": {
+              "kind": "OBJECT",
+              "name": "rest",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "_set",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "pk_columns",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "update_rest_many",
+            "type": {
+              "kind": "LIST",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "rest_mutation_response",
                 "ofType": null
               }
             },

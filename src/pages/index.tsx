@@ -34,7 +34,7 @@ const Home: NextPage = () => {
       user_id: user?.sub || "",
     },
   });
-  const [{ data: timesResponce }] = useQuery<
+  const [{ data: timesResponse }] = useQuery<
     GetUserTimesQuery,
     GetUserTimesQueryVariables
   >({
@@ -80,10 +80,10 @@ const Home: NextPage = () => {
       <Text>{`${user_state?.users_by_pk?.state}`}</Text>
       <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
       <Box>
-        <Text>出勤時刻：{`${timesResponce?.attendance[0].start_time}`}</Text>
-        <Text>退勤時刻：{`${timesResponce?.attendance[0].end_time}`}</Text>
-        <Text>休憩入り：{`${timesResponce?.rest[0].start_rest}`}</Text>
-        <Text>休憩戻り：{`${timesResponce?.rest[0].end_rest}`}</Text>
+        <Text>出勤時刻：{`${timesResponse?.attendance[0].start_time}`}</Text>
+        <Text>退勤時刻：{`${timesResponse?.attendance[0].end_time}`}</Text>
+        <Text>休憩入り：{`${timesResponse?.rest[0].start_rest}`}</Text>
+        <Text>休憩戻り：{`${timesResponse?.rest[0].end_rest}`}</Text>
       </Box>
       <ClockInButton
         nowTime={nowTime}

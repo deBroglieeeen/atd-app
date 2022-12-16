@@ -3,22 +3,29 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
 import {
-  UpdateClockoutMutationMutation,
-  UpdateClockoutMutationMutationVariables,
+  UpdateClockoutMutation,
+  UpdateClockoutMutationVariables,
+  UpdateUserStateMutation,
+  UpdateUserStateMutationVariables,
 } from "../generated/graphql";
 import { updateClockoutMutation } from "../graphql/attendance";
+import { updateUserStateMutation } from "../graphql/userState";
 
 type Props = {
   nowTime: string;
-  setEndTime: Dispatch<SetStateAction<string>>;
   attendanceId: string;
+  user_id: string;
 };
 
-const ClockOutButton = ({ nowTime, setEndTime, attendanceId }: Props) => {
+const ClockOutButton = ({ nowTime, attendanceId, user_id }: Props) => {
   const [updateClockoutResult, updateClockout] = useMutation<
-    UpdateClockoutMutationMutation,
-    UpdateClockoutMutationMutationVariables
+    UpdateClockoutMutation,
+    UpdateClockoutMutationVariables
   >(updateClockoutMutation);
+  const [updateUserStateResult, updateUserState] = useMutation<
+    UpdateUserStateMutation,
+    UpdateUserStateMutationVariables
+  >(updateUserStateMutation);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
 
@@ -32,10 +39,16 @@ const ClockOutButton = ({ nowTime, setEndTime, attendanceId }: Props) => {
         attendanceId: attendanceId,
         endTime: nowTime,
       });
-      setEndTime(nowTime);
       console.log(updateClockoutResult.data?.update_attendance);
       if (updateClockoutResult.error) {
         throw new Error(updateClockoutResult.error.message);
+      }
+      const updateUserStateResult = await updateUserState({
+        user_state: "勤務外",
+        user_id: user_id,
+      });
+      if (updateUserStateResult.error) {
+        throw new Error(updateUserStateResult.error.message);
       }
     } catch (error) {
       console.error(error);

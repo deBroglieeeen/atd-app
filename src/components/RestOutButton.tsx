@@ -1,24 +1,31 @@
 import { Dispatch, SetStateAction } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
-  UpdateRestoutMutationMutation,
-  UpdateRestoutMutationMutationVariables,
+  UpdateRestoutMutation,
+  UpdateRestoutMutationVariables,
+  UpdateUserStateMutation,
+  UpdateUserStateMutationVariables,
 } from "../generated/graphql";
 import { updateRestoutMutation } from "../graphql/rest";
+import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
 
 type Props = {
   nowTime: string;
-  setEndRest: Dispatch<SetStateAction<string>>;
   restId: string;
+  user_id: string;
 };
 
-const RestOutButton = ({ nowTime, setEndRest, restId }: Props) => {
+const RestOutButton = ({ nowTime, restId, user_id }: Props) => {
   const [updateRestoutResult, updateRestout] = useMutation<
-    UpdateRestoutMutationMutation,
-    UpdateRestoutMutationMutationVariables
+    UpdateRestoutMutation,
+    UpdateRestoutMutationVariables
   >(updateRestoutMutation);
+  const [updateUserStateResult, updateUserState] = useMutation<
+    UpdateUserStateMutation,
+    UpdateUserStateMutationVariables
+  >(updateUserStateMutation);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
 
@@ -32,10 +39,16 @@ const RestOutButton = ({ nowTime, setEndRest, restId }: Props) => {
         restId: restId,
         endRest: nowTime,
       });
-      setEndRest(nowTime);
       console.log(updateRestoutResult.data?.update_rest);
       if (updateRestoutResult.error) {
         throw new Error(updateRestoutResult.error.message);
+      }
+      const updateUserStateResult = await updateUserState({
+        user_state: "勤務中",
+        user_id: user_id,
+      });
+      if (updateUserStateResult.error) {
+        throw new Error(updateUserStateResult.error.message);
       }
     } catch (error) {
       console.error(error);

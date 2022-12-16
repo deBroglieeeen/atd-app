@@ -1,5 +1,5 @@
 export const addClockinMutation = /* GraphQL */ `
-  mutation addClockinMutation($startTime: timestamptz!) {
+  mutation addClockin($startTime: timestamptz!) {
     insert_attendance_one(object: { start_time: $startTime }) {
       id
     }
@@ -7,10 +7,7 @@ export const addClockinMutation = /* GraphQL */ `
 `;
 
 export const updateClockoutMutation = /* GraphQL */ `
-  mutation updateClockoutMutation(
-    $attendanceId: uuid!
-    $endTime: timestamptz!
-  ) {
+  mutation updateClockout($attendanceId: uuid!, $endTime: timestamptz!) {
     update_attendance(
       where: { id: { _eq: $attendanceId } }
       _set: { end_time: $endTime }

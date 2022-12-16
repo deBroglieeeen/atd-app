@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
-  AddClockinMutationMutation,
-  AddClockinMutationMutationVariables,
+  AddClockinMutation,
+  AddClockinMutationVariables,
 } from "../generated/graphql";
 import { addClockinMutation } from "../graphql/attendance";
 import {
-  UpdateUserStateMutationMutation,
-  UpdateUserStateMutationMutationVariables,
+  UpdateUserStateMutation,
+  UpdateUserStateMutationVariables,
 } from "../generated/graphql";
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
@@ -21,12 +21,12 @@ type Props = {
 
 const ClockInButton = ({ nowTime, setAttendanceId, user_id }: Props) => {
   const [addClockinResult, addClockin] = useMutation<
-    AddClockinMutationMutation,
-    AddClockinMutationMutationVariables
+    AddClockinMutation,
+    AddClockinMutationVariables
   >(addClockinMutation);
   const [updateUserStateResult, updateUserState] = useMutation<
-    UpdateUserStateMutationMutation,
-    UpdateUserStateMutationMutationVariables
+    UpdateUserStateMutation,
+    UpdateUserStateMutationVariables
   >(updateUserStateMutation);
   const { isAuthenticated, loginWithRedirect, user } = useAuth0();
   const toast = useToast();

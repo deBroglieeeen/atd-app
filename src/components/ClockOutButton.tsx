@@ -3,10 +3,10 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
 import {
-  UpdateClockoutMutationMutation,
-  UpdateClockoutMutationMutationVariables,
-  UpdateUserStateMutationMutation,
-  UpdateUserStateMutationMutationVariables,
+  UpdateClockoutMutation,
+  UpdateClockoutMutationVariables,
+  UpdateUserStateMutation,
+  UpdateUserStateMutationVariables,
 } from "../generated/graphql";
 import { updateClockoutMutation } from "../graphql/attendance";
 import { updateUserStateMutation } from "../graphql/userState";
@@ -19,12 +19,12 @@ type Props = {
 
 const ClockOutButton = ({ nowTime, attendanceId, user_id }: Props) => {
   const [updateClockoutResult, updateClockout] = useMutation<
-    UpdateClockoutMutationMutation,
-    UpdateClockoutMutationMutationVariables
+    UpdateClockoutMutation,
+    UpdateClockoutMutationVariables
   >(updateClockoutMutation);
   const [updateUserStateResult, updateUserState] = useMutation<
-    UpdateUserStateMutationMutation,
-    UpdateUserStateMutationMutationVariables
+    UpdateUserStateMutation,
+    UpdateUserStateMutationVariables
   >(updateUserStateMutation);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();

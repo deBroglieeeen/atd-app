@@ -1,5 +1,5 @@
 export const addRestinMutation = /* GraphQL */ `
-  mutation addRestinMutation($startRest: timestamptz!) {
+  mutation addRestin($startRest: timestamptz!) {
     insert_rest_one(object: { start_rest: $startRest }) {
       id
     }
@@ -7,7 +7,7 @@ export const addRestinMutation = /* GraphQL */ `
 `;
 
 export const updateRestoutMutation = /* GraphQL */ `
-  mutation updateRestoutMutation($restId: uuid!, $endRest: timestamptz!) {
+  mutation updateRestout($restId: uuid!, $endRest: timestamptz!) {
     update_rest(where: { id: { _eq: $restId } }, _set: { end_rest: $endRest }) {
       affected_rows
       returning {

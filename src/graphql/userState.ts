@@ -1,5 +1,5 @@
 export const updateUserStateMutation = /* GraphQL */ `
-  mutation updateUserStateMutation($user_state: String!, $user_id: String!) {
+  mutation updateUserState($user_state: String!, $user_id: String!) {
     update_users(
       _set: { state: $user_state }
       where: { id: { _eq: $user_id } }
@@ -14,7 +14,7 @@ export const updateUserStateMutation = /* GraphQL */ `
 `;
 
 export const getUserStateQuery = /* GraphQL */ `
-  query GetUserStateQuery($user_id: String!) {
+  query GetUserState($user_id: String!) {
     users_by_pk(id: $user_id) {
       state
     }

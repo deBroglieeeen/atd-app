@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
-  UpdateRestoutMutationMutation,
-  UpdateRestoutMutationMutationVariables,
-  UpdateUserStateMutationMutation,
-  UpdateUserStateMutationMutationVariables,
+  UpdateRestoutMutation,
+  UpdateRestoutMutationVariables,
+  UpdateUserStateMutation,
+  UpdateUserStateMutationVariables,
 } from "../generated/graphql";
 import { updateRestoutMutation } from "../graphql/rest";
 import { updateUserStateMutation } from "../graphql/userState";
@@ -19,12 +19,12 @@ type Props = {
 
 const RestOutButton = ({ nowTime, restId, user_id }: Props) => {
   const [updateRestoutResult, updateRestout] = useMutation<
-    UpdateRestoutMutationMutation,
-    UpdateRestoutMutationMutationVariables
+    UpdateRestoutMutation,
+    UpdateRestoutMutationVariables
   >(updateRestoutMutation);
   const [updateUserStateResult, updateUserState] = useMutation<
-    UpdateUserStateMutationMutation,
-    UpdateUserStateMutationMutationVariables
+    UpdateUserStateMutation,
+    UpdateUserStateMutationVariables
   >(updateUserStateMutation);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();

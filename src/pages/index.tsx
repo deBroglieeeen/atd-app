@@ -9,8 +9,8 @@ import { RestInButton } from "../components/RestInButton";
 import { RestOutButton } from "../components/RestOutButton";
 import { useQuery } from "urql";
 import {
-  GetUserStateQueryQuery,
-  GetUserStateQueryQueryVariables,
+  GetUserStateQuery,
+  GetUserStateQueryVariables,
 } from "../generated/graphql";
 import { getUserStateQuery } from "../graphql/userState";
 import {
@@ -26,8 +26,8 @@ const Home: NextPage = () => {
   const [restId, setRestId] = useState("");
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [{ data: user_state, fetching }] = useQuery<
-    GetUserStateQueryQuery,
-    GetUserStateQueryQueryVariables
+    GetUserStateQuery,
+    GetUserStateQueryVariables
   >({
     query: getUserStateQuery,
     variables: {

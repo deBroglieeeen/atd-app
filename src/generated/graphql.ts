@@ -751,35 +751,35 @@ export type Uuid_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['uuid']>>;
 };
 
-export type AddClockinMutationMutationVariables = Exact<{
+export type AddClockinMutationVariables = Exact<{
   startTime: Scalars['timestamptz'];
 }>;
 
 
-export type AddClockinMutationMutation = { __typename?: 'mutation_root', insert_attendance_one?: { __typename?: 'attendance', id: any } | null };
+export type AddClockinMutation = { __typename?: 'mutation_root', insert_attendance_one?: { __typename?: 'attendance', id: any } | null };
 
-export type UpdateClockoutMutationMutationVariables = Exact<{
+export type UpdateClockoutMutationVariables = Exact<{
   attendanceId: Scalars['uuid'];
   endTime: Scalars['timestamptz'];
 }>;
 
 
-export type UpdateClockoutMutationMutation = { __typename?: 'mutation_root', update_attendance?: { __typename?: 'attendance_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'attendance', user_id: string, end_time?: any | null, start_time: any }> } | null };
+export type UpdateClockoutMutation = { __typename?: 'mutation_root', update_attendance?: { __typename?: 'attendance_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'attendance', user_id: string, end_time?: any | null, start_time: any }> } | null };
 
-export type AddRestinMutationMutationVariables = Exact<{
+export type AddRestinMutationVariables = Exact<{
   startRest: Scalars['timestamptz'];
 }>;
 
 
-export type AddRestinMutationMutation = { __typename?: 'mutation_root', insert_rest_one?: { __typename?: 'rest', id: any } | null };
+export type AddRestinMutation = { __typename?: 'mutation_root', insert_rest_one?: { __typename?: 'rest', id: any } | null };
 
-export type UpdateRestoutMutationMutationVariables = Exact<{
+export type UpdateRestoutMutationVariables = Exact<{
   restId: Scalars['uuid'];
   endRest: Scalars['timestamptz'];
 }>;
 
 
-export type UpdateRestoutMutationMutation = { __typename?: 'mutation_root', update_rest?: { __typename?: 'rest_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'rest', user_id: string, end_rest?: any | null, start_rest: any }> } | null };
+export type UpdateRestoutMutation = { __typename?: 'mutation_root', update_rest?: { __typename?: 'rest_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'rest', user_id: string, end_rest?: any | null, start_rest: any }> } | null };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -788,20 +788,20 @@ export type GetUserByIdQueryVariables = Exact<{
 
 export type GetUserByIdQuery = { __typename?: 'query_root', users_by_pk?: { __typename: 'users', created_at: any, id: string, name: string, is_host?: boolean | null } | null };
 
-export type UpdateUserStateMutationMutationVariables = Exact<{
+export type UpdateUserStateMutationVariables = Exact<{
   user_state: Scalars['String'];
   user_id: Scalars['String'];
 }>;
 
 
-export type UpdateUserStateMutationMutation = { __typename?: 'mutation_root', update_users?: { __typename?: 'users_mutation_response', returning: Array<{ __typename?: 'users', name: string, id: string, created_at: any }> } | null };
+export type UpdateUserStateMutation = { __typename?: 'mutation_root', update_users?: { __typename?: 'users_mutation_response', returning: Array<{ __typename?: 'users', name: string, id: string, created_at: any }> } | null };
 
-export type GetUserStateQueryQueryVariables = Exact<{
+export type GetUserStateQueryVariables = Exact<{
   user_id: Scalars['String'];
 }>;
 
 
-export type GetUserStateQueryQuery = { __typename?: 'query_root', users_by_pk?: { __typename?: 'users', state: string } | null };
+export type GetUserStateQuery = { __typename?: 'query_root', users_by_pk?: { __typename?: 'users', state: string } | null };
 
 export type GetUserTimesQueryVariables = Exact<{
   user_id: Scalars['String'];

@@ -65,7 +65,7 @@ export type Attendance = {
   __typename?: 'attendance';
   end_time?: Maybe<Scalars['timestamptz']>;
   id: Scalars['uuid'];
-  start_time?: Maybe<Scalars['timestamptz']>;
+  start_time: Scalars['timestamptz'];
   /** An object relationship */
   user: Users;
   user_id: Scalars['String'];
@@ -411,7 +411,7 @@ export type Rest = {
   __typename?: 'rest';
   end_rest?: Maybe<Scalars['timestamptz']>;
   id: Scalars['uuid'];
-  start_rest?: Maybe<Scalars['timestamptz']>;
+  start_rest: Scalars['timestamptz'];
   /** An object relationship */
   user: Users;
   user_id: Scalars['String'];
@@ -622,6 +622,7 @@ export type Users = {
   id: Scalars['String'];
   is_host?: Maybe<Scalars['Boolean']>;
   name: Scalars['String'];
+  state: Scalars['String'];
 };
 
 /** Boolean expression to filter rows from the table "users". All fields are combined with a logical 'AND'. */
@@ -633,6 +634,7 @@ export type Users_Bool_Exp = {
   id?: InputMaybe<String_Comparison_Exp>;
   is_host?: InputMaybe<Boolean_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
+  state?: InputMaybe<String_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "users" */
@@ -644,6 +646,7 @@ export type Users_Constraint =
 export type Users_Insert_Input = {
   is_host?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
 };
 
 /** response of any mutation on the table "users" */
@@ -675,6 +678,7 @@ export type Users_Order_By = {
   id?: InputMaybe<Order_By>;
   is_host?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
+  state?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: users */
@@ -691,12 +695,15 @@ export type Users_Select_Column =
   /** column name */
   | 'is_host'
   /** column name */
-  | 'name';
+  | 'name'
+  /** column name */
+  | 'state';
 
 /** input type for updating data in table "users" */
 export type Users_Set_Input = {
   is_host?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
 };
 
 /** Streaming cursor of the table "users" */
@@ -713,6 +720,7 @@ export type Users_Stream_Cursor_Value_Input = {
   id?: InputMaybe<Scalars['String']>;
   is_host?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
 };
 
 /** update columns of table "users" */
@@ -720,7 +728,9 @@ export type Users_Update_Column =
   /** column name */
   | 'is_host'
   /** column name */
-  | 'name';
+  | 'name'
+  /** column name */
+  | 'state';
 
 export type Users_Updates = {
   /** sets the columns of the filtered rows to the given values */
@@ -754,7 +764,7 @@ export type UpdateClockoutMutationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateClockoutMutationMutation = { __typename?: 'mutation_root', update_attendance?: { __typename?: 'attendance_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'attendance', user_id: string, end_time?: any | null, start_time?: any | null }> } | null };
+export type UpdateClockoutMutationMutation = { __typename?: 'mutation_root', update_attendance?: { __typename?: 'attendance_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'attendance', user_id: string, end_time?: any | null, start_time: any }> } | null };
 
 export type AddRestinMutationMutationVariables = Exact<{
   startRest: Scalars['timestamptz'];
@@ -769,7 +779,7 @@ export type UpdateRestoutMutationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateRestoutMutationMutation = { __typename?: 'mutation_root', update_rest?: { __typename?: 'rest_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'rest', user_id: string, end_rest?: any | null, start_rest?: any | null }> } | null };
+export type UpdateRestoutMutationMutation = { __typename?: 'mutation_root', update_rest?: { __typename?: 'rest_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'rest', user_id: string, end_rest?: any | null, start_rest: any }> } | null };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -777,6 +787,28 @@ export type GetUserByIdQueryVariables = Exact<{
 
 
 export type GetUserByIdQuery = { __typename?: 'query_root', users_by_pk?: { __typename: 'users', created_at: any, id: string, name: string, is_host?: boolean | null } | null };
+
+export type UpdateUserStateMutationMutationVariables = Exact<{
+  user_state: Scalars['String'];
+  user_id: Scalars['String'];
+}>;
+
+
+export type UpdateUserStateMutationMutation = { __typename?: 'mutation_root', update_users?: { __typename?: 'users_mutation_response', returning: Array<{ __typename?: 'users', name: string, id: string, created_at: any }> } | null };
+
+export type GetUserStateQueryQueryVariables = Exact<{
+  user_id: Scalars['String'];
+}>;
+
+
+export type GetUserStateQueryQuery = { __typename?: 'query_root', users_by_pk?: { __typename?: 'users', state: string } | null };
+
+export type GetUserTimesQueryVariables = Exact<{
+  user_id: Scalars['String'];
+}>;
+
+
+export type GetUserTimesQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null }>, rest: Array<{ __typename?: 'rest', start_rest: any, end_rest?: any | null }> };
 
 import { IntrospectionQuery } from 'graphql';
 export default {
@@ -817,8 +849,11 @@ export default {
           {
             "name": "start_time",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
             },
             "args": []
           },
@@ -1651,8 +1686,11 @@ export default {
           {
             "name": "start_rest",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
             },
             "args": []
           },
@@ -2166,6 +2204,17 @@ export default {
           },
           {
             "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "state",
             "type": {
               "kind": "NON_NULL",
               "ofType": {

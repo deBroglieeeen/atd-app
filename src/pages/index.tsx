@@ -48,9 +48,6 @@ const Home: NextPage = () => {
     if (user === null) {
       loginWithRedirect();
     }
-    console.log("id:", user?.sub);
-    console.log("name:", user?.name);
-    console.log("state:", user_state);
 
     const timer = setInterval(() => {
       const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
@@ -80,10 +77,10 @@ const Home: NextPage = () => {
       <Text>{`${user_state?.users_by_pk?.state}`}</Text>
       <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
       <Box>
-        <Text>出勤時刻：{`${timesResponse?.attendance[0].start_time}`}</Text>
-        <Text>退勤時刻：{`${timesResponse?.attendance[0].end_time}`}</Text>
-        <Text>休憩入り：{`${timesResponse?.rest[0].start_rest}`}</Text>
-        <Text>休憩戻り：{`${timesResponse?.rest[0].end_rest}`}</Text>
+        <Text>出勤時刻：{`${timesResponse?.attendance[0]?.start_time ?? ""}`}</Text>
+        <Text>退勤時刻：{`${timesResponse?.attendance[0]?.end_time ?? ""}`}</Text>
+        <Text>休憩入り：{`${timesResponse?.rest[0]?.start_rest ?? ""}`}</Text>
+        <Text>休憩戻り：{`${timesResponse?.rest[0]?.end_rest ?? ""}`}</Text>
       </Box>
       <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <ClockOutButton

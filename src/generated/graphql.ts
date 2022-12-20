@@ -808,7 +808,7 @@ export type GetUserTimesQueryVariables = Exact<{
 }>;
 
 
-export type GetUserTimesQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', id: any, start_time: any, end_time?: any | null }>, rest: Array<{ __typename?: 'rest', start_rest?: any | null, end_rest?: any | null }> };
+export type GetUserTimesQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', id: any, start_time: any, end_time?: any | null }>, rest: Array<{ __typename?: 'rest', id: any, start_rest?: any | null, end_rest?: any | null }> };
 
 import { IntrospectionQuery } from 'graphql';
 export default {

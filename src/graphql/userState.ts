@@ -37,6 +37,7 @@ export const getUserTimesQuery = /* GraphQL */ `
       order_by: { start_rest: desc }
       limit: 1
     ) {
+      id
       start_rest
       end_rest
     }

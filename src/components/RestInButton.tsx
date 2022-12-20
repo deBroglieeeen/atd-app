@@ -15,11 +15,10 @@ import { Button, useToast } from "@chakra-ui/react";
 
 type Props = {
   nowTime: string;
-  setRestId: Dispatch<SetStateAction<string>>;
   user_id: string;
 };
 
-const RestInButton = ({ nowTime, setRestId, user_id }: Props) => {
+const RestInButton = ({ nowTime, user_id }: Props) => {
   const [addRestinResult, addRestin] = useMutation<
     AddRestinMutation,
     AddRestinMutationVariables
@@ -41,7 +40,6 @@ const RestInButton = ({ nowTime, setRestId, user_id }: Props) => {
         startRest: nowTime,
       });
       console.log(addRestinResult.data?.insert_rest_one);
-      setRestId(addRestinResult.data?.insert_rest_one?.id);
       if (addRestinResult.error) {
         throw new Error(addRestinResult.error.message);
       }

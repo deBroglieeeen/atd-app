@@ -411,7 +411,7 @@ export type Rest = {
   __typename?: 'rest';
   end_rest?: Maybe<Scalars['timestamptz']>;
   id: Scalars['uuid'];
-  start_rest: Scalars['timestamptz'];
+  start_rest?: Maybe<Scalars['timestamptz']>;
   /** An object relationship */
   user: Users;
   user_id: Scalars['String'];
@@ -779,7 +779,7 @@ export type UpdateRestoutMutationVariables = Exact<{
 }>;
 
 
-export type UpdateRestoutMutation = { __typename?: 'mutation_root', update_rest?: { __typename?: 'rest_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'rest', user_id: string, end_rest?: any | null, start_rest: any }> } | null };
+export type UpdateRestoutMutation = { __typename?: 'mutation_root', update_rest?: { __typename?: 'rest_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'rest', user_id: string, end_rest?: any | null, start_rest?: any | null }> } | null };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -808,7 +808,7 @@ export type GetUserTimesQueryVariables = Exact<{
 }>;
 
 
-export type GetUserTimesQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null }>, rest: Array<{ __typename?: 'rest', start_rest: any, end_rest?: any | null }> };
+export type GetUserTimesQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', id: any, start_time: any, end_time?: any | null }>, rest: Array<{ __typename?: 'rest', start_rest?: any | null, end_rest?: any | null }> };
 
 import { IntrospectionQuery } from 'graphql';
 export default {
@@ -1686,11 +1686,8 @@ export default {
           {
             "name": "start_rest",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+              "kind": "SCALAR",
+              "name": "Any"
             },
             "args": []
           },

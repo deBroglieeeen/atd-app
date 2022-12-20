@@ -85,11 +85,7 @@ const Home: NextPage = () => {
         <Text>休憩入り：{`${timesResponse?.rest[0].start_rest}`}</Text>
         <Text>休憩戻り：{`${timesResponse?.rest[0].end_rest}`}</Text>
       </Box>
-      <ClockInButton
-        nowTime={nowTime}
-        setAttendanceId={setAttendanceId}
-        user_id={user?.sub || ""}
-      />
+      <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <ClockOutButton
         nowTime={nowTime}
         attendanceId={attendanceId}

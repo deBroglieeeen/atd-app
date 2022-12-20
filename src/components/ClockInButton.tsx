@@ -15,11 +15,10 @@ import { Button, useToast } from "@chakra-ui/react";
 
 type Props = {
   nowTime: string;
-  setAttendanceId: Dispatch<SetStateAction<string>>;
   user_id: string;
 };
 
-const ClockInButton = ({ nowTime, setAttendanceId, user_id }: Props) => {
+const ClockInButton = ({ nowTime, user_id }: Props) => {
   const [addClockinResult, addClockin] = useMutation<
     AddClockinMutation,
     AddClockinMutationVariables
@@ -41,7 +40,6 @@ const ClockInButton = ({ nowTime, setAttendanceId, user_id }: Props) => {
         startTime: nowTime,
       });
       console.log(addClockinResult.data?.insert_attendance_one);
-      setAttendanceId(addClockinResult.data?.insert_attendance_one?.id);
       if (addClockinResult.error) {
         throw new Error(addClockinResult.error.message);
       }

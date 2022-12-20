@@ -22,8 +22,6 @@ import { getUserTimesQuery } from "../graphql/userState";
 const Home: NextPage = () => {
   const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [nowTime, setNowtime] = useState(now);
-  const [attendanceId, setAttendanceId] = useState("");
-  const [restId, setRestId] = useState("");
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [{ data: user_state, fetching }] = useQuery<
     GetUserStateQuery,
@@ -77,29 +75,25 @@ const Home: NextPage = () => {
       <Text>{`${user_state?.users_by_pk?.state}`}</Text>
       <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
       <Box>
-        <Text>出勤時刻：{`${timesResponse?.attendance[0]?.start_time ?? ""}`}</Text>
-        <Text>退勤時刻：{`${timesResponse?.attendance[0]?.end_time ?? ""}`}</Text>
+        <Text>
+          出勤時刻：{`${timesResponse?.attendance[0]?.start_time ?? ""}`}
+        </Text>
+        <Text>
+          退勤時刻：{`${timesResponse?.attendance[0]?.end_time ?? ""}`}
+        </Text>
         <Text>休憩入り：{`${timesResponse?.rest[0]?.start_rest ?? ""}`}</Text>
         <Text>休憩戻り：{`${timesResponse?.rest[0]?.end_rest ?? ""}`}</Text>
       </Box>
-      <ClockInButton
-        nowTime={nowTime}
-        setAttendanceId={setAttendanceId}
-        user_id={user?.sub || ""}
-      />
+      <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <ClockOutButton
         nowTime={nowTime}
-        attendanceId={attendanceId}
+        attendanceId={timesResponse?.attendance[0].id}
         user_id={user?.sub || ""}
       />
-      <RestInButton
-        nowTime={nowTime}
-        setRestId={setRestId}
-        user_id={user?.sub || ""}
-      />
+      <RestInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <RestOutButton
         nowTime={nowTime}
-        restId={restId}
+        restId={timesResponse?.rest[0]?.id ?? ""}
         user_id={user?.sub || ""}
       />
       <Box>{user ? `(ユーザー:${user?.name}${user.sub})` : null}</Box>

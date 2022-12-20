@@ -22,8 +22,6 @@ import { getUserTimesQuery } from "../graphql/userState";
 const Home: NextPage = () => {
   const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [nowTime, setNowtime] = useState(now);
-  const [attendanceId, setAttendanceId] = useState("");
-  const [restId, setRestId] = useState("");
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [{ data: user_state, fetching }] = useQuery<
     GetUserStateQuery,

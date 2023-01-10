@@ -15,9 +15,17 @@ type Props = {
   nowTime: string;
   attendanceId: string;
   user_id: string;
+  // attendanceButton: boolean;
+  // setAttendanceButton: Dispatch<SetStateAction<boolean>>;
 };
 
-const ClockOutButton = ({ nowTime, attendanceId, user_id }: Props) => {
+const ClockOutButton = ({
+  nowTime,
+  attendanceId,
+  user_id,
+}: // attendanceButton,
+// setAttendanceButton,
+Props) => {
   const [updateClockoutResult, updateClockout] = useMutation<
     UpdateClockoutMutation,
     UpdateClockoutMutationVariables
@@ -47,6 +55,7 @@ const ClockOutButton = ({ nowTime, attendanceId, user_id }: Props) => {
         user_state: "勤務外",
         user_id: user_id,
       });
+      // setAttendanceButton(true);
       if (updateUserStateResult.error) {
         throw new Error(updateUserStateResult.error.message);
       }
@@ -70,7 +79,14 @@ const ClockOutButton = ({ nowTime, attendanceId, user_id }: Props) => {
     });
   };
 
-  return <Button onClick={clickClockOut}>退勤</Button>;
+  return (
+    <Button
+      //  disabled={attendanceButton}
+      onClick={clickClockOut}
+    >
+      退勤
+    </Button>
+  );
 };
 
 export { ClockOutButton };

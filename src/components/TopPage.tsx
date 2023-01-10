@@ -22,6 +22,7 @@ import { getUserTimesQuery } from "../graphql/userState";
 const TopPage: NextPage = () => {
   const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [nowTime, setNowtime] = useState(now);
+  // const [attendanceButton, setAttendanceButton] = useState(true);
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [{ data: user_state, fetching }] = useQuery<
     GetUserStateQuery,
@@ -73,11 +74,16 @@ const TopPage: NextPage = () => {
         <Text>休憩入り：{`${timesResponse?.rest[0]?.start_rest ?? ""}`}</Text>
         <Text>休憩戻り：{`${timesResponse?.rest[0]?.end_rest ?? ""}`}</Text>
       </Box>
-      <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
+      <ClockInButton
+        nowTime={nowTime}
+        user_id={user?.sub || ""}
+        // attendanceButton={!attendanceButton}
+      />
       <ClockOutButton
         nowTime={nowTime}
         attendanceId={timesResponse?.attendance[0].id}
         user_id={user?.sub || ""}
+        // attendanceButton={attendanceButton}
       />
       <RestInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <RestOutButton

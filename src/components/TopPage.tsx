@@ -9,10 +9,12 @@ import { RestInButton } from "./RestInButton";
 import { RestOutButton } from "./RestOutButton";
 import { useQuery } from "urql";
 import {
+  Get3DaysDataQuery,
+  Get3DaysDataQueryVariables,
   GetUserStateQuery,
   GetUserStateQueryVariables,
 } from "../generated/graphql";
-import { getUserStateQuery } from "../graphql/userState";
+import { get3DaysDataQuery, getUserStateQuery } from "../graphql/userState";
 import {
   GetUserTimesQuery,
   GetUserTimesQueryVariables,
@@ -22,7 +24,8 @@ import { getUserTimesQuery } from "../graphql/userState";
 const TopPage: NextPage = () => {
   const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [nowTime, setNowtime] = useState(now);
-  // const [attendanceButton, setAttendanceButton] = useState(true);
+  const today = dayjs.utc().format();
+  const two_days_ago = dayjs.utc().subtract(2, "day").format();
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [{ data: user_state, fetching }] = useQuery<
     GetUserStateQuery,
@@ -42,12 +45,25 @@ const TopPage: NextPage = () => {
       user_id: user?.sub || "",
     },
   });
+  const [{ data: daysdata }] = useQuery<
+    Get3DaysDataQuery,
+    Get3DaysDataQueryVariables
+  >({
+    query: get3DaysDataQuery,
+    variables: {
+      today: today,
+      two_days_ago: two_days_ago,
+      user_id: user?.sub || "",
+    },
+  });
 
   useEffect(() => {
     if (user === null) {
       loginWithRedirect();
     }
-
+    console.log("today", today);
+    console.log("2ago", two_days_ago);
+    console.log(daysdata);
     const timer = setInterval(() => {
       const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
       setNowtime(now);
@@ -65,6 +81,9 @@ const TopPage: NextPage = () => {
       <Text color="#E53E3E">{`${user_state?.users_by_pk?.state}`}</Text>
       <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
       <Box>
+        <Text>3Days Records</Text>
+      </Box>
+      <Box>
         <Text>
           出勤時刻：{`${timesResponse?.attendance[0]?.start_time ?? ""}`}
         </Text>
@@ -74,16 +93,12 @@ const TopPage: NextPage = () => {
         <Text>休憩入り：{`${timesResponse?.rest[0]?.start_rest ?? ""}`}</Text>
         <Text>休憩戻り：{`${timesResponse?.rest[0]?.end_rest ?? ""}`}</Text>
       </Box>
-      <ClockInButton
-        nowTime={nowTime}
-        user_id={user?.sub || ""}
-        // attendanceButton={!attendanceButton}
-      />
+      <Box></Box>
+      <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <ClockOutButton
         nowTime={nowTime}
         attendanceId={timesResponse?.attendance[0].id}
         user_id={user?.sub || ""}
-        // attendanceButton={attendanceButton}
       />
       <RestInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <RestOutButton

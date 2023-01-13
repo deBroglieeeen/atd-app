@@ -16,16 +16,9 @@ import { Button, useToast } from "@chakra-ui/react";
 type Props = {
   nowTime: string;
   user_id: string;
-  // attendanceButton: boolean;
-  // setAttendanceButton: Dispatch<SetStateAction<boolean>>;
 };
 
-const ClockInButton = ({
-  nowTime,
-  user_id,
-}: // attendanceButton,
-// setAttendanceButton,
-Props) => {
+const ClockInButton = ({ nowTime, user_id }: Props) => {
   const [addClockinResult, addClockin] = useMutation<
     AddClockinMutation,
     AddClockinMutationVariables
@@ -54,7 +47,6 @@ Props) => {
         user_state: "勤務中",
         user_id: user_id,
       });
-      // setAttendanceButton(false);
       if (updateUserStateResult.error) {
         throw new Error(updateUserStateResult.error.message);
       }
@@ -78,14 +70,7 @@ Props) => {
     });
   };
 
-  return (
-    <Button
-      //  isDisabled={attendanceButton}
-      onClick={clickClockIn}
-    >
-      出勤
-    </Button>
-  );
+  return <Button onClick={clickClockIn}>出勤</Button>;
 };
 
 export { ClockInButton };

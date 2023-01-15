@@ -1,7 +1,15 @@
 import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { dayjs } from "../lib/dayjs";
-import { Box, Button, Heading, Spinner, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  Spacer,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { ClockInButton } from "./ClockInButton";
 import { ClockOutButton } from "./ClockOutButton";
@@ -24,8 +32,12 @@ import { getUserTimesQuery } from "../graphql/userState";
 const TopPage: NextPage = () => {
   const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [nowTime, setNowtime] = useState(now);
-  const today = dayjs.utc().format();
-  const two_days_ago = dayjs.utc().subtract(2, "day").format();
+  const days = {
+    sub_today: `${dayjs.utc().add(1, "day")}`,
+    today: `${dayjs.utc().format("YYYY-MM-DD")}`,
+    yesterday: `${dayjs.utc().subtract(1, "day").format("YYYY-MM-DD")}`,
+    two_days_ago: `${dayjs.utc().subtract(2, "day").format("YYYY-MM-DD")}`,
+  };
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const [{ data: user_state, fetching }] = useQuery<
     GetUserStateQuery,
@@ -51,8 +63,8 @@ const TopPage: NextPage = () => {
   >({
     query: get3DaysDataQuery,
     variables: {
-      today: today,
-      two_days_ago: two_days_ago,
+      today: days.sub_today,
+      two_days_ago: days.two_days_ago,
       user_id: user?.sub || "",
     },
   });
@@ -61,8 +73,8 @@ const TopPage: NextPage = () => {
     if (user === null) {
       loginWithRedirect();
     }
-    console.log("today", today);
-    console.log("2ago", two_days_ago);
+    console.log("today", days.today);
+    console.log("2ago", days.two_days_ago);
     console.log(daysdata);
     const timer = setInterval(() => {
       const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
@@ -81,19 +93,20 @@ const TopPage: NextPage = () => {
       <Text color="#E53E3E">{`${user_state?.users_by_pk?.state}`}</Text>
       <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
       <Box>
-        <Text>3Days Records</Text>
+        <Text fontSize="2xl">3Days Records</Text>
       </Box>
-      <Box>
-        <Text>
-          出勤時刻：{`${timesResponse?.attendance[0]?.start_time ?? ""}`}
-        </Text>
-        <Text>
-          退勤時刻：{`${timesResponse?.attendance[0]?.end_time ?? ""}`}
-        </Text>
-        <Text>休憩入り：{`${timesResponse?.rest[0]?.start_rest ?? ""}`}</Text>
-        <Text>休憩戻り：{`${timesResponse?.rest[0]?.end_rest ?? ""}`}</Text>
+      <Box w="100%" p={4}>
+        <Text fontSize="xl">{`${days.today}`}</Text>
+        {daysdata?.attendance.map(
+          (data, i) =>
+            (
+              <Box key={i}>
+                <Text>{data.start_time}</Text>
+                <Text>{data.end_time}</Text>
+              </Box>
+            ) ?? []
+        )}
       </Box>
-      <Box></Box>
       <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <ClockOutButton
         nowTime={nowTime}

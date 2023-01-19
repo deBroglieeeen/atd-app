@@ -28,6 +28,9 @@ import {
   GetUserTimesQueryVariables,
 } from "../generated/graphql";
 import { getUserTimesQuery } from "../graphql/userState";
+import DayRecords from "./DayRecords";
+
+
 
 const TopPage: NextPage = () => {
   const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
@@ -92,20 +95,11 @@ const TopPage: NextPage = () => {
       <Heading>atd app</Heading>
       <Text color="#E53E3E">{`${user_state?.users_by_pk?.state}`}</Text>
       <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
-      <Box>
+      <Box p={4}>
         <Text fontSize="2xl">3Days Records</Text>
-      </Box>
-      <Box w="100%" p={4}>
-        <Text fontSize="xl">{`${days.today}`}</Text>
-        {daysdata?.attendance.map(
-          (data, i) =>
-            (
-              <Box key={i}>
-                <Text>{data.start_time}</Text>
-                <Text>{data.end_time}</Text>
-              </Box>
-            ) ?? []
-        )}
+        <DayRecords day={days.today} daydata={daysdata?.attendance}/>
+        <DayRecords day={days.yesterday} daydata={daysdata?.attendance}/>
+        <DayRecords day={days.two_days_ago} daydata={daysdata?.attendance}/>
       </Box>
       <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <ClockOutButton

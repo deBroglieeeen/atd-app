@@ -1,4 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
+import { attendanceMap } from "../constants/index";
 
 type Props = {
     day: string
@@ -14,14 +15,14 @@ const DayRecords = ({day, daydata}: Props) => {
         <Text fontSize="xl">{`${day}`}</Text>
         {daydata?.map(
           (data, i) => {
+            console.log(Object.keys(data)[0])
+            console.log(attendanceMap.get(Object.keys(data)[0]))
             if(data.start_time.match(day)){
-              if(data.end_time === null) {
-                data.end_time =  ""
-              }
+
               return(
                 <Box key={i}>
-                  <Text>{`${data.start_time}`}</Text>
-                  <Text>{`${data.end_time}`}</Text>
+                  <Text>{attendanceMap.get(Object.keys(data)[0])} : {`${data.start_time}`}</Text>
+                  <Text>{attendanceMap.get(Object.keys(data)[1])} : {`${data.end_time ?? ""}`}</Text>
                 </Box>
               )
             }

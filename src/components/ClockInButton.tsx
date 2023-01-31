@@ -47,7 +47,6 @@ const ClockInButton = ({ nowTime, user_id }: Props) => {
         user_state: "勤務中",
         user_id: user_id,
       });
-      console.log(updateUserStateResult.operation.variables.user_state);
       if (updateUserStateResult.error) {
         throw new Error(updateUserStateResult.error.message);
       }

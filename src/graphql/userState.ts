@@ -43,3 +43,20 @@ export const getUserTimesQuery = /* GraphQL */ `
     }
   }
 `;
+
+export const get3DaysDataQuery = /* GraphQL */ `
+  query Get3DaysData(
+    $today: timestamptz!
+    $two_days_ago: timestamptz!
+    $user_id: String!
+  ) {
+    attendance(where: {start_time: {_gte: $two_days_ago, _lte: $today}, user_id: {_eq: $user_id}}) {
+      start_time
+      end_time
+    }
+    rest(where: {start_rest: {_gte: $two_days_ago, _lte: $today}, user_id: {_eq: $user_id}}) {
+      start_rest
+      end_rest
+    }
+  }
+`;

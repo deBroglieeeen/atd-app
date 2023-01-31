@@ -11,7 +11,7 @@ import {
   AUTH0_CLIENT_ID,
   AUTH0_DOMAIN,
   AUTH0_REDIRECT_URI,
-} from "../config/constants";
+} from "../config/server";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

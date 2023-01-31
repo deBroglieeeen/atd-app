@@ -76,9 +76,6 @@ const TopPage: NextPage = () => {
     if (user === null) {
       loginWithRedirect();
     }
-    console.log("today", days.today);
-    console.log("2ago", days.two_days_ago);
-    console.log(daysdata);
     const timer = setInterval(() => {
       const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
       setNowtime(now);
@@ -97,9 +94,9 @@ const TopPage: NextPage = () => {
       <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
       <Box p={4}>
         <Text fontSize="2xl">3Days Records</Text>
-        <DayRecords day={days.today} daydata={daysdata?.attendance}/>
-        <DayRecords day={days.yesterday} daydata={daysdata?.attendance}/>
-        <DayRecords day={days.two_days_ago} daydata={daysdata?.attendance}/>
+        <DayRecords day={days.today} daydata={daysdata}/>
+        <DayRecords day={days.yesterday} daydata={daysdata}/>
+        <DayRecords day={days.two_days_ago} daydata={daysdata}/>
       </Box>
       <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <ClockOutButton

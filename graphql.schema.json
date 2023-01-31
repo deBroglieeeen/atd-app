@@ -2040,7 +2040,7 @@
           },
           {
             "name": "where",
-            "description": null,
+            "description": "filter the rows which have to be updated",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -3935,7 +3935,7 @@
           },
           {
             "name": "where",
-            "description": null,
+            "description": "filter the rows which have to be updated",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -5491,7 +5491,7 @@
           },
           {
             "name": "where",
-            "description": null,
+            "description": "filter the rows which have to be updated",
             "type": {
               "kind": "NON_NULL",
               "name": null,

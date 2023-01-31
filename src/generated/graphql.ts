@@ -170,6 +170,7 @@ export type Attendance_Update_Column =
 export type Attendance_Updates = {
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Attendance_Set_Input>;
+  /** filter the rows which have to be updated */
   where: Attendance_Bool_Exp;
 };
 
@@ -514,6 +515,7 @@ export type Rest_Update_Column =
 export type Rest_Updates = {
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Rest_Set_Input>;
+  /** filter the rows which have to be updated */
   where: Rest_Bool_Exp;
 };
 
@@ -735,6 +737,7 @@ export type Users_Update_Column =
 export type Users_Updates = {
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Users_Set_Input>;
+  /** filter the rows which have to be updated */
   where: Users_Bool_Exp;
 };
 
@@ -817,7 +820,7 @@ export type Get3DaysDataQueryVariables = Exact<{
 }>;
 
 
-export type Get3DaysDataQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null }> };
+export type Get3DaysDataQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null }>, rest: Array<{ __typename?: 'rest', start_rest: any, end_rest?: any | null }> };
 
 import { IntrospectionQuery } from 'graphql';
 export default {

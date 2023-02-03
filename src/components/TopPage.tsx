@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { dayjs } from "../lib/dayjs";
 import {
   Box,
@@ -72,6 +72,17 @@ const TopPage: NextPage = () => {
     },
   });
 
+  const daysDataMemo = useMemo(() => 
+    <>
+      <DayRecords day={days.today} daydata={daysdata} />
+      <DayRecords day={days.yesterday} daydata={daysdata} />
+      <DayRecords day={days.two_days_ago} daydata={daysdata} />
+    </>, [daysdata])
+
+  //時計のせいで無駄にレンダリングしてるのを直したい
+  //https://qiita.com/Naughty1029/items/d3aa9e7099a215438117
+
+  //index.tsでisAuthenticatedの判断しているから、ここでログインしているかどうかの確認はいらないのでは？
   useEffect(() => {
     if (user === null) {
       loginWithRedirect();
@@ -82,6 +93,8 @@ const TopPage: NextPage = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, [isAuthenticated, loginWithRedirect, user_state]);
+
+  console.log("!")
 
   return fetching ? (
     <Box display="flex" justifyContent="center">
@@ -94,9 +107,7 @@ const TopPage: NextPage = () => {
       <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
       <Box p={4}>
         <Text fontSize="2xl">3Days Records</Text>
-        <DayRecords day={days.today} daydata={daysdata}/>
-        <DayRecords day={days.yesterday} daydata={daysdata}/>
-        <DayRecords day={days.two_days_ago} daydata={daysdata}/>
+        {daysDataMemo}
       </Box>
       <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
       <ClockOutButton

@@ -29,8 +29,8 @@ import {
 } from "../generated/graphql";
 import { getUserTimesQuery } from "../graphql/userState";
 import DayRecords from "./DayRecords";
-
-
+import { Time } from "./Clock/Time";
+import { DigitalClock } from "./Clock/DigitalClock";
 
 const TopPage: NextPage = () => {
   const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
@@ -72,12 +72,16 @@ const TopPage: NextPage = () => {
     },
   });
 
-  const daysDataMemo = useMemo(() => 
-    <>
-      <DayRecords day={days.today} daydata={daysdata} />
-      <DayRecords day={days.yesterday} daydata={daysdata} />
-      <DayRecords day={days.two_days_ago} daydata={daysdata} />
-    </>, [daysdata])
+  const daysDataMemo = useMemo(
+    () => (
+      <>
+        <DayRecords day={days.today} daydata={daysdata} />
+        <DayRecords day={days.yesterday} daydata={daysdata} />
+        <DayRecords day={days.two_days_ago} daydata={daysdata} />
+      </>
+    ),
+    [daysdata]
+  );
 
   //時計のせいで無駄にレンダリングしてるのを直したい
   //https://qiita.com/Naughty1029/items/d3aa9e7099a215438117
@@ -87,14 +91,9 @@ const TopPage: NextPage = () => {
     if (user === null) {
       loginWithRedirect();
     }
-    const timer = setInterval(() => {
-      const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
-      setNowtime(now);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [isAuthenticated, loginWithRedirect, user_state]);
+  }, [loginWithRedirect, user_state]);
 
-  console.log("!")
+  console.log("!");
 
   return fetching ? (
     <Box display="flex" justifyContent="center">
@@ -104,7 +103,7 @@ const TopPage: NextPage = () => {
     <>
       <Heading>atd app</Heading>
       <Text color="#E53E3E">{`${user_state?.users_by_pk?.state}`}</Text>
-      <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
+      <DigitalClock />
       <Box p={4}>
         <Text fontSize="2xl">3Days Records</Text>
         {daysDataMemo}

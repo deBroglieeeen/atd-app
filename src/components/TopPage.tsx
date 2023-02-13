@@ -83,14 +83,12 @@ const TopPage: NextPage = () => {
     [daysdata]
   );
 
-  //時計のせいで無駄にレンダリングしてるのを直したい
-  //https://qiita.com/Naughty1029/items/d3aa9e7099a215438117
-
   //index.tsでisAuthenticatedの判断しているから、ここでログインしているかどうかの確認はいらないのでは？
   useEffect(() => {
     if (user === null) {
       loginWithRedirect();
     }
+    setNowtime(now);
   }, [loginWithRedirect, user_state]);
 
   console.log("!");

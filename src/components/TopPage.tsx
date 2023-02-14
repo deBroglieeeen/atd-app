@@ -29,7 +29,6 @@ import {
 } from "../generated/graphql";
 import { getUserTimesQuery } from "../graphql/userState";
 import DayRecords from "./DayRecords";
-import { Time } from "./Clock/Time";
 import { DigitalClock } from "./Clock/DigitalClock";
 
 const TopPage: NextPage = () => {
@@ -90,8 +89,6 @@ const TopPage: NextPage = () => {
     }
     setNowtime(now);
   }, [loginWithRedirect, user_state]);
-
-  console.log("!");
 
   return fetching ? (
     <Box display="flex" justifyContent="center">

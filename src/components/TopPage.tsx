@@ -1,15 +1,7 @@
 import { NextPage } from "next";
 import { useEffect, useMemo, useState } from "react";
 import { dayjs } from "../lib/dayjs";
-import {
-  Box,
-  Button,
-  Container,
-  Heading,
-  Spacer,
-  Spinner,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Heading, Spinner, Text } from "@chakra-ui/react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { ClockInButton } from "./ClockInButton";
 import { ClockOutButton } from "./ClockOutButton";
@@ -32,7 +24,7 @@ import DayRecords from "./DayRecords";
 import { DigitalClock } from "./Clock/DigitalClock";
 
 const TopPage: NextPage = () => {
-  const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
+  const now = dayjs();
   const [nowTime, setNowtime] = useState(now);
   const days = {
     sub_today: `${dayjs.utc().add(1, "day")}`,
@@ -40,7 +32,7 @@ const TopPage: NextPage = () => {
     yesterday: `${dayjs.utc().subtract(1, "day").format("YYYY-MM-DD")}`,
     two_days_ago: `${dayjs.utc().subtract(2, "day").format("YYYY-MM-DD")}`,
   };
-  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { user, loginWithRedirect, logout } = useAuth0();
   const [{ data: user_state, fetching }] = useQuery<
     GetUserStateQuery,
     GetUserStateQueryVariables
@@ -103,15 +95,13 @@ const TopPage: NextPage = () => {
         <Text fontSize="2xl">3Days Records</Text>
         {daysDataMemo}
       </Box>
-      <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
+      <ClockInButton user_id={user?.sub || ""} />
       <ClockOutButton
-        nowTime={nowTime}
         attendanceId={timesResponse?.attendance[0].id}
         user_id={user?.sub || ""}
       />
-      <RestInButton nowTime={nowTime} user_id={user?.sub || ""} />
+      <RestInButton user_id={user?.sub || ""} />
       <RestOutButton
-        nowTime={nowTime}
         restId={timesResponse?.rest[0]?.id ?? ""}
         user_id={user?.sub || ""}
       />

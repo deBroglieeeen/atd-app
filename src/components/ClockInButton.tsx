@@ -12,13 +12,14 @@ import {
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
+import dayjs from "dayjs";
 
 type Props = {
-  nowTime: string;
   user_id: string;
 };
 
-const ClockInButton = ({ nowTime, user_id }: Props) => {
+const ClockInButton = ({ user_id }: Props) => {
+  const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [addClockinResult, addClockin] = useMutation<
     AddClockinMutation,
     AddClockinMutationVariables
@@ -37,7 +38,7 @@ const ClockInButton = ({ nowTime, user_id }: Props) => {
     }
     try {
       const addClockinResult = await addClockin({
-        startTime: nowTime,
+        startTime: now,
       });
       console.log(addClockinResult.data?.insert_attendance_one);
       if (addClockinResult.error) {

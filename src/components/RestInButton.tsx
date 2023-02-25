@@ -12,13 +12,15 @@ import {
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
+import dayjs from "dayjs";
 
 type Props = {
-  nowTime: string;
   user_id: string;
 };
 
-const RestInButton = ({ nowTime, user_id }: Props) => {
+const RestInButton = ({ user_id }: Props) => {
+  const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
+
   const [addRestinResult, addRestin] = useMutation<
     AddRestinMutation,
     AddRestinMutationVariables
@@ -37,7 +39,7 @@ const RestInButton = ({ nowTime, user_id }: Props) => {
     }
     try {
       const addRestinResult = await addRestin({
-        startRest: nowTime,
+        startRest: now,
       });
       console.log(addRestinResult.data?.insert_rest_one);
       if (addRestinResult.error) {

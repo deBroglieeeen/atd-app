@@ -10,14 +10,15 @@ import { updateRestoutMutation } from "../graphql/rest";
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
+import dayjs from "dayjs";
 
 type Props = {
-  nowTime: string;
   restId: string;
   user_id: string;
 };
 
-const RestOutButton = ({ nowTime, restId, user_id }: Props) => {
+const RestOutButton = ({ restId, user_id }: Props) => {
+  const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
   const [updateRestoutResult, updateRestout] = useMutation<
     UpdateRestoutMutation,
     UpdateRestoutMutationVariables
@@ -37,7 +38,7 @@ const RestOutButton = ({ nowTime, restId, user_id }: Props) => {
     try {
       const updateRestoutResult = await updateRestout({
         restId: restId,
-        endRest: nowTime,
+        endRest: now,
       });
       console.log(updateRestoutResult.data?.update_rest);
       if (updateRestoutResult.error) {

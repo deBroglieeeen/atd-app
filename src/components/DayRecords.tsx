@@ -20,16 +20,16 @@ const DayRecords = ({ day, daydata }: Props) => {
   const restData = daydata?.rest;
 
   const alldaydata = [];
-  for (var i = 0; i < (attendanceData?.length ?? 0); i++) {
+  for (let i = 0; i < (attendanceData?.length ?? 0); i++) {
     alldaydata.push(Object.entries(attendanceData?.[i] ?? ""));
   }
-  for (var i = 0; i < (restData?.length ?? 0); i++) {
+  for (let i = 0; i < (restData?.length ?? 0); i++) {
     alldaydata.push(Object.entries(restData?.[i] ?? ""));
   }
 
   const alldaydata_array = [];
-  for (var i = 0; i < alldaydata?.length; i++) {
-    for (var j = 0; j < 2; j++) {
+  for (let i = 0; i < alldaydata?.length; i++) {
+    for (let j = 0; j < 2; j++) {
       alldaydata_array.push(alldaydata[i]?.[j]);
     }
   }

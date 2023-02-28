@@ -19,7 +19,7 @@ type Props = {
 };
 
 const ClockOutButton = ({ attendanceId, user_id }: Props) => {
-  const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
+  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
   const [updateClockoutResult, updateClockout] = useMutation<
     UpdateClockoutMutation,
     UpdateClockoutMutationVariables
@@ -30,8 +30,6 @@ const ClockOutButton = ({ attendanceId, user_id }: Props) => {
   >(updateUserStateMutation);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
-
-  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
 
   const clickClockOut = async () => {
     if (!isAuthenticated) {

@@ -20,7 +20,7 @@ type Props = {
 };
 
 const ClockInButton = ({ user_id }: Props) => {
-  const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
+  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
   const [addClockinResult, addClockin] = useMutation<
     AddClockinMutation,
     AddClockinMutationVariables
@@ -31,8 +31,6 @@ const ClockInButton = ({ user_id }: Props) => {
   >(updateUserStateMutation);
   const { isAuthenticated, loginWithRedirect, user } = useAuth0();
   const toast = useToast();
-
-  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
 
   const clickClockIn = async () => {
     if (!isAuthenticated) {

@@ -20,7 +20,7 @@ type Props = {
 };
 
 const RestInButton = ({ user_id }: Props) => {
-  // const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
+  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
 
   const [addRestinResult, addRestin] = useMutation<
     AddRestinMutation,
@@ -32,8 +32,6 @@ const RestInButton = ({ user_id }: Props) => {
   >(updateUserStateMutation);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
-
-  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
 
   const clickRestIn = async () => {
     if (!isAuthenticated) {

@@ -19,7 +19,7 @@ type Props = {
 };
 
 const RestOutButton = ({ restId, user_id }: Props) => {
-  const now = dayjs().tz().format("YYYY-MM-DD HH:mm:ss");
+  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
   const [updateRestoutResult, updateRestout] = useMutation<
     UpdateRestoutMutation,
     UpdateRestoutMutationVariables
@@ -30,8 +30,6 @@ const RestOutButton = ({ restId, user_id }: Props) => {
   >(updateUserStateMutation);
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
-
-  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
 
   const clickRestOut = async () => {
     if (!isAuthenticated) {

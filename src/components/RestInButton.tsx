@@ -13,13 +13,14 @@ import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
 import dayjs from "dayjs";
+import { useTimer } from "./Clock/useTimer";
 
 type Props = {
   user_id: string;
 };
 
 const RestInButton = ({ user_id }: Props) => {
-  const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
+  // const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
 
   const [addRestinResult, addRestin] = useMutation<
     AddRestinMutation,
@@ -32,6 +33,8 @@ const RestInButton = ({ user_id }: Props) => {
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
 
+  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+
   const clickRestIn = async () => {
     if (!isAuthenticated) {
       loginWithRedirect();
@@ -39,14 +42,14 @@ const RestInButton = ({ user_id }: Props) => {
     }
     try {
       const addRestinResult = await addRestin({
-        startRest: now,
+        startRest: clickTime,
       });
       console.log(addRestinResult.data?.insert_rest_one);
       if (addRestinResult.error) {
         throw new Error(addRestinResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
-        user_state: "休憩中",
+        user_state: "rest",
         user_id: user_id,
       });
       if (updateUserStateResult.error) {

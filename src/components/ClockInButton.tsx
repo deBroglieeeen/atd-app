@@ -13,6 +13,7 @@ import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
 import dayjs from "dayjs";
+import { useTimer } from "./Clock/useTimer";
 
 type Props = {
   user_id: string;
@@ -31,6 +32,8 @@ const ClockInButton = ({ user_id }: Props) => {
   const { isAuthenticated, loginWithRedirect, user } = useAuth0();
   const toast = useToast();
 
+  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+
   const clickClockIn = async () => {
     if (!isAuthenticated) {
       loginWithRedirect();
@@ -38,14 +41,14 @@ const ClockInButton = ({ user_id }: Props) => {
     }
     try {
       const addClockinResult = await addClockin({
-        startTime: now,
+        startTime: clickTime,
       });
       console.log(addClockinResult.data?.insert_attendance_one);
       if (addClockinResult.error) {
         throw new Error(addClockinResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
-        user_state: "勤務中",
+        user_state: "on",
         user_id: user_id,
       });
       if (updateUserStateResult.error) {

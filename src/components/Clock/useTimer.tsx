@@ -1,11 +1,13 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
-const useTimer = (interval: number) => {
+const useTimer = () => {
   const [currentTime, useCurrentTime] = useState(dayjs());
 
   useEffect(() => {
-    const timeout = setTimeout(() => useCurrentTime(dayjs()), interval);
+    const timeout = setTimeout(() => {
+      useCurrentTime(dayjs()), 1000;
+    });
     return () => {
       clearTimeout(timeout);
     };

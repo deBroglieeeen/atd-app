@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { dayjs } from "../lib/dayjs";
 import { Box, Button, Heading, Spinner, Text } from "@chakra-ui/react";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -22,10 +22,9 @@ import {
 import { getUserTimesQuery } from "../graphql/userState";
 import DayRecords from "./DayRecords";
 import { DigitalClock } from "./Clock/DigitalClock";
+import { userStateMap } from "../constants";
 
 const TopPage: NextPage = () => {
-  const now = dayjs();
-  const [nowTime, setNowtime] = useState(now);
   const days = {
     sub_today: `${dayjs.utc().add(1, "day")}`,
     today: `${dayjs.utc().format("YYYY-MM-DD")}`,
@@ -73,13 +72,11 @@ const TopPage: NextPage = () => {
     ),
     [daysdata]
   );
-
   //index.tsでisAuthenticatedの判断しているから、ここでログインしているかどうかの確認はいらないのでは？
   useEffect(() => {
     if (user === null) {
       loginWithRedirect();
     }
-    setNowtime(now);
   }, [loginWithRedirect, user_state]);
 
   return fetching ? (
@@ -89,8 +86,11 @@ const TopPage: NextPage = () => {
   ) : (
     <>
       <Heading>atd app</Heading>
-      <Text color="#E53E3E">{`${user_state?.users_by_pk?.state}`}</Text>
+      <Text color={`${user_state?.users_by_pk?.state}`}>
+        {userStateMap.get(`${user_state?.users_by_pk?.state}`)}
+      </Text>
       <DigitalClock />
+
       <Box p={4}>
         <Text fontSize="2xl">3Days Records</Text>
         {daysDataMemo}

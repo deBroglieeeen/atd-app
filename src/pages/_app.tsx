@@ -12,6 +12,7 @@ import {
   AUTH0_DOMAIN,
   AUTH0_REDIRECT_URI,
 } from "../config/server";
+import { theme } from "../styles/theme";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -21,7 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       audience={AUTH0_API_AUDIENCE}
       redirectUri={AUTH0_REDIRECT_URI}
     >
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <AuthorizedUrqlProvider>
           <Component {...pageProps} />
         </AuthorizedUrqlProvider>

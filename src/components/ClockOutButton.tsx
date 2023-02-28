@@ -11,6 +11,7 @@ import {
 import { updateClockoutMutation } from "../graphql/attendance";
 import { updateUserStateMutation } from "../graphql/userState";
 import dayjs from "dayjs";
+import { useTimer } from "./Clock/useTimer";
 
 type Props = {
   attendanceId: string;
@@ -30,6 +31,8 @@ const ClockOutButton = ({ attendanceId, user_id }: Props) => {
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const toast = useToast();
 
+  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+
   const clickClockOut = async () => {
     if (!isAuthenticated) {
       loginWithRedirect();
@@ -38,14 +41,14 @@ const ClockOutButton = ({ attendanceId, user_id }: Props) => {
     try {
       const updateClockoutResult = await updateClockout({
         attendanceId: attendanceId,
-        endTime: now,
+        endTime: clickTime,
       });
       console.log(updateClockoutResult.data?.update_attendance);
       if (updateClockoutResult.error) {
         throw new Error(updateClockoutResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
-        user_state: "勤務外",
+        user_state: "off",
         user_id: user_id,
       });
       if (updateUserStateResult.error) {

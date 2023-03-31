@@ -1,15 +1,7 @@
 import { NextPage } from "next";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { dayjs } from "../lib/dayjs";
-import {
-  Box,
-  Button,
-  Container,
-  Heading,
-  Spacer,
-  Spinner,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Heading, Spinner, Text } from "@chakra-ui/react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { ClockInButton } from "./ClockInButton";
 import { ClockOutButton } from "./ClockOutButton";
@@ -29,19 +21,17 @@ import {
 } from "../generated/graphql";
 import { getUserTimesQuery } from "../graphql/userState";
 import DayRecords from "./DayRecords";
-
-
+import { DigitalClock } from "./Clock/DigitalClock";
+import { userStateMap } from "../constants";
 
 const TopPage: NextPage = () => {
-  const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
-  const [nowTime, setNowtime] = useState(now);
   const days = {
     sub_today: `${dayjs.utc().add(1, "day")}`,
     today: `${dayjs.utc().format("YYYY-MM-DD")}`,
     yesterday: `${dayjs.utc().subtract(1, "day").format("YYYY-MM-DD")}`,
     two_days_ago: `${dayjs.utc().subtract(2, "day").format("YYYY-MM-DD")}`,
   };
-  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { user, loginWithRedirect, logout } = useAuth0();
   const [{ data: user_state, fetching }] = useQuery<
     GetUserStateQuery,
     GetUserStateQueryVariables
@@ -72,29 +62,22 @@ const TopPage: NextPage = () => {
     },
   });
 
-  const daysDataMemo = useMemo(() => 
-    <>
-      <DayRecords day={days.today} daydata={daysdata} />
-      <DayRecords day={days.yesterday} daydata={daysdata} />
-      <DayRecords day={days.two_days_ago} daydata={daysdata} />
-    </>, [daysdata])
-
-  //時計のせいで無駄にレンダリングしてるのを直したい
-  //https://qiita.com/Naughty1029/items/d3aa9e7099a215438117
-
+  const daysDataMemo = useMemo(
+    () => (
+      <>
+        <DayRecords day={days.today} daydata={daysdata} />
+        <DayRecords day={days.yesterday} daydata={daysdata} />
+        <DayRecords day={days.two_days_ago} daydata={daysdata} />
+      </>
+    ),
+    [daysdata]
+  );
   //index.tsでisAuthenticatedの判断しているから、ここでログインしているかどうかの確認はいらないのでは？
   useEffect(() => {
     if (user === null) {
       loginWithRedirect();
     }
-    const timer = setInterval(() => {
-      const now = dayjs().format("YYYY-MM-DD HH:mm:ss");
-      setNowtime(now);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [isAuthenticated, loginWithRedirect, user_state]);
-
-  console.log("!")
+  }, [loginWithRedirect, user_state]);
 
   return fetching ? (
     <Box display="flex" justifyContent="center">
@@ -103,21 +86,22 @@ const TopPage: NextPage = () => {
   ) : (
     <>
       <Heading>atd app</Heading>
-      <Text color="#E53E3E">{`${user_state?.users_by_pk?.state}`}</Text>
-      <Text suppressHydrationWarning={true}>{`${nowTime}`}</Text>
+      <Text color={`${user_state?.users_by_pk?.state}`}>
+        {userStateMap.get(`${user_state?.users_by_pk?.state}`)}
+      </Text>
+      <DigitalClock />
+
       <Box p={4}>
         <Text fontSize="2xl">3Days Records</Text>
         {daysDataMemo}
       </Box>
-      <ClockInButton nowTime={nowTime} user_id={user?.sub || ""} />
+      <ClockInButton user_id={user?.sub || ""} />
       <ClockOutButton
-        nowTime={nowTime}
         attendanceId={timesResponse?.attendance[0].id}
         user_id={user?.sub || ""}
       />
-      <RestInButton nowTime={nowTime} user_id={user?.sub || ""} />
+      <RestInButton user_id={user?.sub || ""} />
       <RestOutButton
-        nowTime={nowTime}
         restId={timesResponse?.rest[0]?.id ?? ""}
         user_id={user?.sub || ""}
       />

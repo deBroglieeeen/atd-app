@@ -10,14 +10,16 @@ import {
 } from "../generated/graphql";
 import { updateClockoutMutation } from "../graphql/attendance";
 import { updateUserStateMutation } from "../graphql/userState";
+import dayjs from "dayjs";
+import { useTimer } from "./Clock/useTimer";
 
 type Props = {
-  nowTime: string;
   attendanceId: string;
   user_id: string;
 };
 
-const ClockOutButton = ({ nowTime, attendanceId, user_id }: Props) => {
+const ClockOutButton = ({ attendanceId, user_id }: Props) => {
+  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
   const [updateClockoutResult, updateClockout] = useMutation<
     UpdateClockoutMutation,
     UpdateClockoutMutationVariables
@@ -37,14 +39,14 @@ const ClockOutButton = ({ nowTime, attendanceId, user_id }: Props) => {
     try {
       const updateClockoutResult = await updateClockout({
         attendanceId: attendanceId,
-        endTime: nowTime,
+        endTime: clickTime,
       });
       console.log(updateClockoutResult.data?.update_attendance);
       if (updateClockoutResult.error) {
         throw new Error(updateClockoutResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
-        user_state: "勤務外",
+        user_state: "off",
         user_id: user_id,
       });
       if (updateUserStateResult.error) {

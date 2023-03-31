@@ -12,13 +12,16 @@ import {
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
+import dayjs from "dayjs";
+import { useTimer } from "./Clock/useTimer";
 
 type Props = {
-  nowTime: string;
   user_id: string;
 };
 
-const RestInButton = ({ nowTime, user_id }: Props) => {
+const RestInButton = ({ user_id }: Props) => {
+  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+
   const [addRestinResult, addRestin] = useMutation<
     AddRestinMutation,
     AddRestinMutationVariables
@@ -37,14 +40,14 @@ const RestInButton = ({ nowTime, user_id }: Props) => {
     }
     try {
       const addRestinResult = await addRestin({
-        startRest: nowTime,
+        startRest: clickTime,
       });
       console.log(addRestinResult.data?.insert_rest_one);
       if (addRestinResult.error) {
         throw new Error(addRestinResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
-        user_state: "休憩中",
+        user_state: "rest",
         user_id: user_id,
       });
       if (updateUserStateResult.error) {

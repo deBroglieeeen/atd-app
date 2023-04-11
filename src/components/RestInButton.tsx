@@ -30,7 +30,7 @@ const RestInButton = ({ user_id }: Props) => {
     UpdateUserStateMutation,
     UpdateUserStateMutationVariables
   >(updateUserStateMutation);
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
   const toast = useToast();
 
   const clickRestIn = async () => {
@@ -53,6 +53,13 @@ const RestInButton = ({ user_id }: Props) => {
       if (updateUserStateResult.error) {
         throw new Error(updateUserStateResult.error.message);
       }
+      fetch("/api/notify", {
+        method: "POST",
+        mode: "same-origin",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify({ message: `${user?.name} :休憩` }),
+      });
     } catch (error) {
       console.error(error);
       toast({

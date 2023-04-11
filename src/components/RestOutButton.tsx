@@ -28,7 +28,7 @@ const RestOutButton = ({ restId, user_id }: Props) => {
     UpdateUserStateMutation,
     UpdateUserStateMutationVariables
   >(updateUserStateMutation);
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
   const toast = useToast();
 
   const clickRestOut = async () => {
@@ -52,6 +52,13 @@ const RestOutButton = ({ restId, user_id }: Props) => {
       if (updateUserStateResult.error) {
         throw new Error(updateUserStateResult.error.message);
       }
+      fetch("/api/notify", {
+        method: "POST",
+        mode: "same-origin",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify({ message: `${user?.name} :戻り` }),
+      });
     } catch (error) {
       console.error(error);
       toast({

@@ -10,7 +10,6 @@ import {
 } from "../generated/graphql";
 import { updateClockoutMutation } from "../graphql/attendance";
 import { updateUserStateMutation } from "../graphql/userState";
-import dayjs from "dayjs";
 import { useTimer } from "./Clock/useTimer";
 
 type Props = {
@@ -28,7 +27,7 @@ const ClockOutButton = ({ attendanceId, user_id }: Props) => {
     UpdateUserStateMutation,
     UpdateUserStateMutationVariables
   >(updateUserStateMutation);
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
   const toast = useToast();
 
   const clickClockOut = async () => {
@@ -52,6 +51,13 @@ const ClockOutButton = ({ attendanceId, user_id }: Props) => {
       if (updateUserStateResult.error) {
         throw new Error(updateUserStateResult.error.message);
       }
+      fetch("/api/notify", {
+        method: "POST",
+        mode: "same-origin",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify({ message: `${user?.name} :退勤` }),
+      });
     } catch (error) {
       console.error(error);
       toast({
@@ -63,6 +69,7 @@ const ClockOutButton = ({ attendanceId, user_id }: Props) => {
       });
       return;
     }
+
     toast({
       description: "退勤打刻しました。",
       status: "success",

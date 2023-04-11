@@ -12,7 +12,6 @@ import {
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
-import dayjs from "dayjs";
 import { useTimer } from "./Clock/useTimer";
 
 type Props = {
@@ -52,6 +51,13 @@ const ClockInButton = ({ user_id }: Props) => {
       if (updateUserStateResult.error) {
         throw new Error(updateUserStateResult.error.message);
       }
+      fetch("/api/notify", {
+        method: "POST",
+        mode: "same-origin",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify({ message: `${user?.name} :出勤` }),
+      });
     } catch (error) {
       console.error(error);
       toast({
@@ -63,6 +69,7 @@ const ClockInButton = ({ user_id }: Props) => {
       });
       return;
     }
+
     toast({
       description: "出勤打刻しました。",
       status: "success",

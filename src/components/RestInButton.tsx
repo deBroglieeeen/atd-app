@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   AddRestinMutation,
@@ -12,8 +11,9 @@ import {
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
-import dayjs from "dayjs";
 import { useTimer } from "./Clock/useTimer";
+import useSlackNotify from "./SlackNotify";
+import { useCallback } from "react";
 
 type Props = {
   user_id: string;
@@ -30,17 +30,23 @@ const RestInButton = ({ user_id }: Props) => {
     UpdateUserStateMutation,
     UpdateUserStateMutationVariables
   >(updateUserStateMutation);
-  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+  const { loginWithRedirect, user } = useAuth0();
   const toast = useToast();
+  const slackNotify = useSlackNotify();
 
-  const clickRestIn = async () => {
-    if (!isAuthenticated) {
+  const clickRestIn = useCallback(async () => {
+    if (!user) {
       loginWithRedirect();
       return;
     }
     try {
       const addRestinResult = await addRestin({
         startRest: clickTime,
+      });
+      slackNotify({
+        user_name: `${user.name}`,
+        time: `${clickTime}`,
+        status: "start_rest",
       });
       console.log(addRestinResult.data?.insert_rest_one);
       if (addRestinResult.error) {
@@ -53,13 +59,6 @@ const RestInButton = ({ user_id }: Props) => {
       if (updateUserStateResult.error) {
         throw new Error(updateUserStateResult.error.message);
       }
-      fetch("/api/notify", {
-        method: "POST",
-        mode: "same-origin",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json; charset=utf-8" },
-        body: JSON.stringify({ message: `${user?.name} :休憩` }),
-      });
     } catch (error) {
       console.error(error);
       toast({
@@ -78,7 +77,16 @@ const RestInButton = ({ user_id }: Props) => {
       isClosable: true,
       position: "top",
     });
-  };
+  }, [
+    addRestin,
+    clickTime,
+    loginWithRedirect,
+    slackNotify,
+    toast,
+    updateUserState,
+    user,
+    user_id,
+  ]);
   return <Button onClick={clickRestIn}>休憩</Button>;
 };
 export { RestInButton };

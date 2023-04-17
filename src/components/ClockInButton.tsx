@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   AddClockinMutation,
@@ -13,6 +13,7 @@ import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
 import { useTimer } from "./Clock/useTimer";
+import useSlackNotify from "./SlackNotify";
 
 type Props = {
   user_id: string;
@@ -28,17 +29,23 @@ const ClockInButton = ({ user_id }: Props) => {
     UpdateUserStateMutation,
     UpdateUserStateMutationVariables
   >(updateUserStateMutation);
-  const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+  const { loginWithRedirect, user } = useAuth0();
   const toast = useToast();
+  const slackNotify = useSlackNotify();
 
-  const clickClockIn = async () => {
-    if (!isAuthenticated) {
+  const clickClockIn = useCallback(async () => {
+    if (!user) {
       loginWithRedirect();
       return;
     }
     try {
       const addClockinResult = await addClockin({
         startTime: clickTime,
+      });
+      slackNotify({
+        user_name: `${user.name}`,
+        time: `${clickTime}`,
+        status: "start_time",
       });
       console.log(addClockinResult.data?.insert_attendance_one);
       if (addClockinResult.error) {
@@ -51,13 +58,6 @@ const ClockInButton = ({ user_id }: Props) => {
       if (updateUserStateResult.error) {
         throw new Error(updateUserStateResult.error.message);
       }
-      fetch("/api/notify", {
-        method: "POST",
-        mode: "same-origin",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json; charset=utf-8" },
-        body: JSON.stringify({ message: `${user?.name} :出勤` }),
-      });
     } catch (error) {
       console.error(error);
       toast({
@@ -77,7 +77,16 @@ const ClockInButton = ({ user_id }: Props) => {
       isClosable: true,
       position: "top",
     });
-  };
+  }, [
+    addClockin,
+    clickTime,
+    loginWithRedirect,
+    slackNotify,
+    toast,
+    updateUserState,
+    user,
+    user_id,
+  ]);
 
   return <Button onClick={clickClockIn}>出勤</Button>;
 };

@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   AddRestinMutation,
@@ -12,17 +11,18 @@ import {
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
 import { Button, useToast } from "@chakra-ui/react";
-import dayjs from "dayjs";
 import { useTimer } from "./Clock/useTimer";
+import useSlackNotify from "./SlackNotify";
+import { useCallback } from "react";
 
 type Props = {
   user_id: string;
 };
 
 const RestInButton = ({ user_id }: Props) => {
-  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+  const restInTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
 
-  const [addRestinResult, addRestin] = useMutation<
+  const [addRestInResult, addRestIn] = useMutation<
     AddRestinMutation,
     AddRestinMutationVariables
   >(addRestinMutation);
@@ -30,21 +30,26 @@ const RestInButton = ({ user_id }: Props) => {
     UpdateUserStateMutation,
     UpdateUserStateMutationVariables
   >(updateUserStateMutation);
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { loginWithRedirect, user } = useAuth0();
   const toast = useToast();
+  const slackNotify = useSlackNotify();
 
-  const clickRestIn = async () => {
-    if (!isAuthenticated) {
+  const clickRestIn = useCallback(async () => {
+    if (!user) {
       loginWithRedirect();
       return;
     }
     try {
-      const addRestinResult = await addRestin({
-        startRest: clickTime,
+      const addRestInResult = await addRestIn({
+        startRest: restInTime,
       });
-      console.log(addRestinResult.data?.insert_rest_one);
-      if (addRestinResult.error) {
-        throw new Error(addRestinResult.error.message);
+      slackNotify({
+        user_name: `${user.name}`,
+        time: `${restInTime}`,
+        status: "start_rest",
+      });
+      if (addRestInResult.error) {
+        throw new Error(addRestInResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
         user_state: "rest",
@@ -71,7 +76,16 @@ const RestInButton = ({ user_id }: Props) => {
       isClosable: true,
       position: "top",
     });
-  };
+  }, [
+    addRestIn,
+    restInTime,
+    loginWithRedirect,
+    slackNotify,
+    toast,
+    updateUserState,
+    user,
+    user_id,
+  ]);
   return <Button onClick={clickRestIn}>休憩</Button>;
 };
 export { RestInButton };

@@ -20,9 +20,9 @@ type Props = {
 };
 
 const RestInButton = ({ user_id }: Props) => {
-  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+  const restInTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
 
-  const [addRestinResult, addRestin] = useMutation<
+  const [addRestInResult, addRestIn] = useMutation<
     AddRestinMutation,
     AddRestinMutationVariables
   >(addRestinMutation);
@@ -40,17 +40,16 @@ const RestInButton = ({ user_id }: Props) => {
       return;
     }
     try {
-      const addRestinResult = await addRestin({
-        startRest: clickTime,
+      const addRestInResult = await addRestIn({
+        startRest: restInTime,
       });
       slackNotify({
         user_name: `${user.name}`,
-        time: `${clickTime}`,
+        time: `${restInTime}`,
         status: "start_rest",
       });
-      console.log(addRestinResult.data?.insert_rest_one);
-      if (addRestinResult.error) {
-        throw new Error(addRestinResult.error.message);
+      if (addRestInResult.error) {
+        throw new Error(addRestInResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
         user_state: "rest",
@@ -78,8 +77,8 @@ const RestInButton = ({ user_id }: Props) => {
       position: "top",
     });
   }, [
-    addRestin,
-    clickTime,
+    addRestIn,
+    restInTime,
     loginWithRedirect,
     slackNotify,
     toast,

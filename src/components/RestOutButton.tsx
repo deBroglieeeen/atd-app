@@ -19,8 +19,8 @@ type Props = {
 };
 
 const RestOutButton = ({ restId, user_id }: Props) => {
-  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
-  const [updateRestoutResult, updateRestout] = useMutation<
+  const restOutTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+  const [updateRestOutResult, updateRestOut] = useMutation<
     UpdateRestoutMutation,
     UpdateRestoutMutationVariables
   >(updateRestoutMutation);
@@ -38,18 +38,17 @@ const RestOutButton = ({ restId, user_id }: Props) => {
       return;
     }
     try {
-      const updateRestoutResult = await updateRestout({
-        endRest: clickTime,
+      const updateRestOutResult = await updateRestOut({
+        endRest: restOutTime,
         restId: restId,
       });
       slackNotify({
         user_name: `${user.name}`,
-        time: `${clickTime}`,
+        time: `${restOutTime}`,
         status: "end_rest",
       });
-      console.log(updateRestoutResult.data?.update_rest);
-      if (updateRestoutResult.error) {
-        throw new Error(updateRestoutResult.error.message);
+      if (updateRestOutResult.error) {
+        throw new Error(updateRestOutResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
         user_state: "on",
@@ -77,12 +76,12 @@ const RestOutButton = ({ restId, user_id }: Props) => {
       position: "top",
     });
   }, [
-    clickTime,
+    restOutTime,
     loginWithRedirect,
     restId,
     slackNotify,
     toast,
-    updateRestout,
+    updateRestOut,
     updateUserState,
     user,
     user_id,

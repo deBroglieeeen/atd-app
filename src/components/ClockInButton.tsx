@@ -20,8 +20,8 @@ type Props = {
 };
 
 const ClockInButton = ({ user_id }: Props) => {
-  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
-  const [addClockinResult, addClockin] = useMutation<
+  const clockInTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+  const [addClockInResult, addClockIn] = useMutation<
     AddClockinMutation,
     AddClockinMutationVariables
   >(addClockinMutation);
@@ -39,17 +39,16 @@ const ClockInButton = ({ user_id }: Props) => {
       return;
     }
     try {
-      const addClockinResult = await addClockin({
-        startTime: clickTime,
+      const addClockInResult = await addClockIn({
+        startTime: clockInTime,
       });
       slackNotify({
         user_name: `${user.name}`,
-        time: `${clickTime}`,
+        time: `${clockInTime}`,
         status: "start_time",
       });
-      console.log(addClockinResult.data?.insert_attendance_one);
-      if (addClockinResult.error) {
-        throw new Error(addClockinResult.error.message);
+      if (addClockInResult.error) {
+        throw new Error(addClockInResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
         user_state: "on",
@@ -78,8 +77,8 @@ const ClockInButton = ({ user_id }: Props) => {
       position: "top",
     });
   }, [
-    addClockin,
-    clickTime,
+    addClockIn,
+    clockInTime,
     loginWithRedirect,
     slackNotify,
     toast,

@@ -19,8 +19,8 @@ type Props = {
 };
 
 const ClockOutButton = ({ attendanceId, user_id }: Props) => {
-  const clickTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
-  const [updateClockoutResult, updateClockout] = useMutation<
+  const clockOutTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+  const [updateClockOutResult, updateClockOut] = useMutation<
     UpdateClockoutMutation,
     UpdateClockoutMutationVariables
   >(updateClockoutMutation);
@@ -38,18 +38,17 @@ const ClockOutButton = ({ attendanceId, user_id }: Props) => {
       return;
     }
     try {
-      const updateClockoutResult = await updateClockout({
+      const updateClockOutResult = await updateClockOut({
         attendanceId: attendanceId,
-        endTime: clickTime,
+        endTime: clockOutTime,
       });
       slackNotify({
         user_name: `${user.name}`,
-        time: `${clickTime}`,
+        time: `${clockOutTime}`,
         status: "end_time",
       });
-      console.log(updateClockoutResult.data?.update_attendance);
-      if (updateClockoutResult.error) {
-        throw new Error(updateClockoutResult.error.message);
+      if (updateClockOutResult.error) {
+        throw new Error(updateClockOutResult.error.message);
       }
       const updateUserStateResult = await updateUserState({
         user_state: "off",
@@ -79,11 +78,11 @@ const ClockOutButton = ({ attendanceId, user_id }: Props) => {
     });
   }, [
     attendanceId,
-    clickTime,
+    clockOutTime,
     loginWithRedirect,
     slackNotify,
     toast,
-    updateClockout,
+    updateClockOut,
     updateUserState,
     user,
     user_id,

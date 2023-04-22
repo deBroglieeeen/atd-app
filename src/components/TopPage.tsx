@@ -25,6 +25,7 @@ import { getUserTimesQuery } from "../graphql/userState";
 import DayRecords from "./DayRecords";
 import { DigitalClock } from "./Clock/DigitalClock";
 import { userStateMap } from "../constants";
+import { start } from "repl";
 
 const TopPage: NextPage = () => {
   const days = {
@@ -64,11 +65,20 @@ const TopPage: NextPage = () => {
     },
   });
 
+  const startMonth = useMemo(() => {
+    const month = dayjs().date() >= 11 ? dayjs().month() : dayjs().month() - 1;
+    return dayjs().month(month).startOf("month").format("YYYY-MM-11");
+  }, []);
+  const endMonth = useMemo(() => {
+    const month = dayjs().date() >= 11 ? dayjs().month() + 1 : dayjs().month();
+    return dayjs().month(month).endOf("month").format("YYYY-MM-10");
+  }, []);
+
   const [{data: currentMonthAttendance}] = useQuery<GetCurrentMonthAttendanceQuery, GetCurrentMonthAttendanceQueryVariables>({
     query: getCurrentMonthAttendanceQuery,
     variables: {
-      start: "2023-03-11",
-      end: "2023-04-10",
+      start: startMonth,
+      end: endMonth,
     }
   })
 
@@ -76,13 +86,13 @@ const TopPage: NextPage = () => {
   const totalWorkingTime = useMemo(() => {
     if (currentMonthAttendance === undefined) return 0;
     
-    const totalAttendance = currentMonthAttendance.attendance.map((attendance) => {
+    const totalAttendance = currentMonthAttendance.attendance.filter((attendance) => !!attendance.end_time).map((attendance) => {
       const start = dayjs(attendance.start_time);
       const end = dayjs(attendance.end_time);
       return end.diff(start);
     }).reduce((a, b) => a + b, 0)
 
-    const totalRest = currentMonthAttendance.rest.map((rest) => {
+    const totalRest = currentMonthAttendance.rest.filter((rest) => !!rest.end_rest).map((rest) => {
       const start = dayjs(rest.start_rest);
       const end = dayjs(rest.end_rest);
       return end.diff(start);

@@ -60,3 +60,24 @@ export const get3DaysDataQuery = /* GraphQL */ `
     }
   }
 `;
+
+export const getCurrentMonthAttendanceQuery = /* GraphQL */ `
+  query getCurrentMonthAttendance($start: timestamptz!, $end: timestamptz!) {
+    attendance(where: {start_time: {_gte: $start, _lt: $end}}) {
+      start_time
+      end_time
+      user {
+        id
+        name
+      }
+    }
+    rest(where: {start_rest: {_gte: $start, _lt: $end}}) {
+      start_rest
+      end_rest
+      user {
+        id
+        name
+      }
+    }
+  }
+`

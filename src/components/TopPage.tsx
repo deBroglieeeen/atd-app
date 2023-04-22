@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import { useEffect, useMemo } from "react";
 import { dayjs } from "../lib/dayjs";
-import { Box, Button, Heading, Spinner, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { ClockInButton } from "./ClockInButton";
 import { ClockOutButton } from "./ClockOutButton";
@@ -11,10 +11,12 @@ import { useQuery } from "urql";
 import {
   Get3DaysDataQuery,
   Get3DaysDataQueryVariables,
+  GetCurrentMonthAttendanceQuery,
+  GetCurrentMonthAttendanceQueryVariables,
   GetUserStateQuery,
   GetUserStateQueryVariables,
 } from "../generated/graphql";
-import { get3DaysDataQuery, getUserStateQuery } from "../graphql/userState";
+import { get3DaysDataQuery, getCurrentMonthAttendanceQuery, getUserStateQuery } from "../graphql/userState";
 import {
   GetUserTimesQuery,
   GetUserTimesQueryVariables,
@@ -62,6 +64,44 @@ const TopPage: NextPage = () => {
     },
   });
 
+  const [{data: currentMonthAttendance}] = useQuery<GetCurrentMonthAttendanceQuery, GetCurrentMonthAttendanceQueryVariables>({
+    query: getCurrentMonthAttendanceQuery,
+    variables: {
+      start: "2023-03-11",
+      end: "2023-04-10",
+    }
+  })
+
+  // Memo: テーブルの持ち方を変えればこの計算は不要になる
+  const totalWorkingTime = useMemo(() => {
+    if (currentMonthAttendance === undefined) return 0;
+    
+    const totalAttendance = currentMonthAttendance.attendance.map((attendance) => {
+      const start = dayjs(attendance.start_time);
+      const end = dayjs(attendance.end_time);
+      return end.diff(start);
+    }).reduce((a, b) => a + b, 0)
+
+    const totalRest = currentMonthAttendance.rest.map((rest) => {
+      const start = dayjs(rest.start_rest);
+      const end = dayjs(rest.end_rest);
+      return end.diff(start);
+    }).reduce((a, b) => a + b, 0)
+
+    return totalAttendance - totalRest
+  }, [currentMonthAttendance])
+
+  const formatTotalWorkingTime = useMemo(() => {
+    const HOUR = 24
+    const totalHours = dayjs.duration(totalWorkingTime).days() * HOUR + dayjs.duration(totalWorkingTime).hours()
+    return `${totalHours}時間${dayjs.duration(totalWorkingTime).minutes()}分`
+  }, [totalWorkingTime])
+
+  const paidDate = useMemo(() => {
+    const month = dayjs().date() >= 11 ? dayjs().month() + 1 : dayjs().month();
+    return dayjs().month(month);
+  }, [])
+
   const daysDataMemo = useMemo(
     () => (
       <>
@@ -70,50 +110,65 @@ const TopPage: NextPage = () => {
         <DayRecords day={days.two_days_ago} daydata={daysdata} />
       </>
     ),
-    [daysdata]
+    [days.today, days.two_days_ago, days.yesterday, daysdata]
   );
   //index.tsでisAuthenticatedの判断しているから、ここでログインしているかどうかの確認はいらないのでは？
   useEffect(() => {
     if (user === null) {
       loginWithRedirect();
     }
-  }, [loginWithRedirect, user_state]);
+  }, [loginWithRedirect, user, user_state]);
 
   return fetching ? (
     <Box display="flex" justifyContent="center">
       <Spinner />
     </Box>
   ) : (
-    <>
-      <Heading>atd app</Heading>
+    <Box p='4'>
+      <Flex py='2' justifyContent='space-between'>
+        <Heading>atd app</Heading>
+        <Button
+          onClick={() => {
+            logout({ returnTo: window.location.origin });
+          }}
+        >
+          Log out
+        </Button>
+      </Flex>
+      <Box>{user ? `(ユーザー:${user?.name}${user.sub})` : null}</Box>
+      <Box py='2'>
+        <Text as='span' fontWeight='bold'>
+          {paidDate.format("YYYY")}年{paidDate.format("MM")}月
+        </Text>
+        分の稼働:&nbsp;
+        <Text as='span' fontWeight='bold'>
+          {formatTotalWorkingTime}
+        </Text>
+      </Box>
       <Text color={`${user_state?.users_by_pk?.state}`}>
         {userStateMap.get(`${user_state?.users_by_pk?.state}`)}
       </Text>
+
       <DigitalClock />
+      <Flex gap='2'>
+        <ClockInButton user_id={user?.sub || ""} />
+        <ClockOutButton
+          attendanceId={timesResponse?.attendance[0]?.id}
+          user_id={user?.sub || ""}
+        />
+        <RestInButton user_id={user?.sub || ""} />
+        <RestOutButton
+          restId={timesResponse?.rest[0]?.id ?? ""}
+          user_id={user?.sub || ""}
+        />
+      </Flex>
 
       <Box p={4}>
         <Text fontSize="2xl">3Days Records</Text>
         {daysDataMemo}
       </Box>
-      <ClockInButton user_id={user?.sub || ""} />
-      <ClockOutButton
-        attendanceId={timesResponse?.attendance[0].id}
-        user_id={user?.sub || ""}
-      />
-      <RestInButton user_id={user?.sub || ""} />
-      <RestOutButton
-        restId={timesResponse?.rest[0]?.id ?? ""}
-        user_id={user?.sub || ""}
-      />
-      <Box>{user ? `(ユーザー:${user?.name}${user.sub})` : null}</Box>
-      <Button
-        onClick={() => {
-          logout({ returnTo: window.location.origin });
-        }}
-      >
-        Log out
-      </Button>
-    </>
+      
+    </Box>
   );
 };
 

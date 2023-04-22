@@ -822,6 +822,14 @@ export type Get3DaysDataQueryVariables = Exact<{
 
 export type Get3DaysDataQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null }>, rest: Array<{ __typename?: 'rest', start_rest: any, end_rest?: any | null }> };
 
+export type GetCurrentMonthAttendanceQueryVariables = Exact<{
+  start: Scalars['timestamptz'];
+  end: Scalars['timestamptz'];
+}>;
+
+
+export type GetCurrentMonthAttendanceQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null, user: { __typename?: 'users', id: string, name: string } }>, rest: Array<{ __typename?: 'rest', start_rest: any, end_rest?: any | null, user: { __typename?: 'users', id: string, name: string } }> };
+
 import { IntrospectionQuery } from 'graphql';
 export default {
   "__schema": {

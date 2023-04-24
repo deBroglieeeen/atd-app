@@ -8,7 +8,7 @@ const Home: NextPage = () => {
   const { isAuthenticated } = useAuth0();
 
   return (
-    <Box marginTop="40px">{isAuthenticated ? <TopPage /> : <Login />}</Box>
+    <Box>{isAuthenticated ? <TopPage /> : <Login />}</Box>
   );
 };
 

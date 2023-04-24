@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation } from "urql";
-import { Button, useToast } from "@chakra-ui/react";
+import { Button, ButtonProps, useToast } from "@chakra-ui/react";
 import {
   UpdateClockoutMutation,
   UpdateClockoutMutationVariables,
@@ -13,12 +13,12 @@ import { useTimer } from "./Clock/useTimer";
 import useSlackNotify from "./SlackNotify";
 import { useCallback } from "react";
 
-type Props = {
+type Props = ButtonProps & {
   attendanceId: string;
   user_id: string;
 };
 
-const ClockOutButton = ({ attendanceId, user_id }: Props) => {
+const ClockOutButton = ({ attendanceId, user_id, ...props }: Props) => {
   const clockOutTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
   const [updateClockOutResult, updateClockOut] = useMutation<
     UpdateClockoutMutation,
@@ -88,7 +88,7 @@ const ClockOutButton = ({ attendanceId, user_id }: Props) => {
     user_id,
   ]);
 
-  return <Button onClick={clickClockOut}>退勤</Button>;
+  return <Button onClick={clickClockOut} {...props}>退勤</Button>;
 };
 
 export { ClockOutButton };

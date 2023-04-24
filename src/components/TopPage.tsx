@@ -128,6 +128,14 @@ const TopPage: NextPage = () => {
     }
   }, [loginWithRedirect, user, user_state]);
 
+  const isWorking = useMemo(() => {
+    return user_state?.users_by_pk?.state === 'on'
+  }, [user_state])
+
+  const isResting = useMemo(() => {
+    return user_state?.users_by_pk?.state === 'rest'
+  }, [user_state])
+
   return fetching ? (
     <Box display="flex" justifyContent="center">
       <Spinner />
@@ -160,15 +168,19 @@ const TopPage: NextPage = () => {
 
       <DigitalClock />
       <Flex gap='2'>
-        <ClockInButton user_id={user?.sub || ""} />
+        <ClockInButton user_id={user?.sub || ""} isDisabled={isWorking || isResting} />
         <ClockOutButton
           attendanceId={timesResponse?.attendance[0]?.id}
           user_id={user?.sub || ""}
+          isDisabled={!isWorking || isResting}
         />
-        <RestInButton user_id={user?.sub || ""} />
+        <RestInButton user_id={user?.sub || ""} 
+        isDisabled={!isWorking}
+        />
         <RestOutButton
           restId={timesResponse?.rest[0]?.id ?? ""}
           user_id={user?.sub || ""}
+          isDisabled={!isResting}
         />
       </Flex>
 

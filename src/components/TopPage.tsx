@@ -25,7 +25,6 @@ import { getUserTimesQuery } from "../graphql/userState";
 import DayRecords from "./DayRecords";
 import { DigitalClock } from "./Clock/DigitalClock";
 import { userStateMap } from "../constants";
-import { start } from "repl";
 
 const TopPage: NextPage = () => {
   const days = {
@@ -84,7 +83,7 @@ const TopPage: NextPage = () => {
 
   // Memo: テーブルの持ち方を変えればこの計算は不要になる
   const totalWorkingTime = useMemo(() => {
-    if (currentMonthAttendance === undefined) return 0;
+    if (!currentMonthAttendance) return 0;
     
     const totalAttendance = currentMonthAttendance.attendance.filter((attendance) => !!attendance.end_time).map((attendance) => {
       const start = dayjs(attendance.start_time);

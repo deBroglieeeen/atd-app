@@ -8,17 +8,17 @@ import {
 import { updateRestoutMutation } from "../graphql/rest";
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
-import { Button, useToast } from "@chakra-ui/react";
+import { Button, ButtonProps, useToast } from "@chakra-ui/react";
 import { useTimer } from "./Clock/useTimer";
 import useSlackNotify from "./SlackNotify";
 import { useCallback } from "react";
 
-type Props = {
+type Props = ButtonProps & {
   restId: string;
   user_id: string;
 };
 
-const RestOutButton = ({ restId, user_id }: Props) => {
+const RestOutButton = ({ restId, user_id, ...props }: Props) => {
   const restOutTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
   const [updateRestOutResult, updateRestOut] = useMutation<
     UpdateRestoutMutation,
@@ -86,7 +86,7 @@ const RestOutButton = ({ restId, user_id }: Props) => {
     user,
     user_id,
   ]);
-  return <Button onClick={clickRestOut}>戻り</Button>;
+  return <Button onClick={clickRestOut} {...props}>戻り</Button>;
 };
 
 export { RestOutButton };

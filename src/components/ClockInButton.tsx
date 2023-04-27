@@ -11,15 +11,15 @@ import {
 } from "../generated/graphql";
 import { updateUserStateMutation } from "../graphql/userState";
 import { useMutation } from "urql";
-import { Button, useToast } from "@chakra-ui/react";
+import { Button, ButtonProps, useToast } from "@chakra-ui/react";
 import { useTimer } from "./Clock/useTimer";
 import useSlackNotify from "./SlackNotify";
 
-type Props = {
+type Props = ButtonProps & {
   user_id: string;
 };
 
-const ClockInButton = ({ user_id }: Props) => {
+const ClockInButton = ({ user_id, ...props }: Props) => {
   const clockInTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
   const [addClockInResult, addClockIn] = useMutation<
     AddClockinMutation,
@@ -87,7 +87,7 @@ const ClockInButton = ({ user_id }: Props) => {
     user_id,
   ]);
 
-  return <Button onClick={clickClockIn}>出勤</Button>;
+  return <Button onClick={clickClockIn} {...props}>出勤</Button>;
 };
 
 export { ClockInButton };

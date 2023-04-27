@@ -769,6 +769,14 @@ export type UpdateClockoutMutationVariables = Exact<{
 
 export type UpdateClockoutMutation = { __typename?: 'mutation_root', update_attendance?: { __typename?: 'attendance_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'attendance', user_id: string, end_time?: any | null, start_time: any }> } | null };
 
+export type GetAttendanceQueryVariables = Exact<{
+  start: Scalars['timestamptz'];
+  end: Scalars['timestamptz'];
+}>;
+
+
+export type GetAttendanceQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null, user: { __typename?: 'users', id: string, name: string } }>, rest: Array<{ __typename?: 'rest', start_rest: any, end_rest?: any | null, user: { __typename?: 'users', id: string, name: string } }> };
+
 export type AddRestinMutationVariables = Exact<{
   startRest: Scalars['timestamptz'];
 }>;
@@ -828,7 +836,7 @@ export type GetCurrentMonthAttendanceQueryVariables = Exact<{
 }>;
 
 
-export type GetCurrentMonthAttendanceQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null, user: { __typename?: 'users', id: string, name: string } }>, rest: Array<{ __typename?: 'rest', start_rest: any, end_rest?: any | null, user: { __typename?: 'users', id: string, name: string } }> };
+export type GetCurrentMonthAttendanceQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null }>, rest: Array<{ __typename?: 'rest', start_rest: any, end_rest?: any | null }> };
 
 import { IntrospectionQuery } from 'graphql';
 export default {

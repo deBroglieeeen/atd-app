@@ -60,7 +60,6 @@ export const MonthlyAttenadnce = () => {
       </Box>
     )
 
-  // Todo: 該当する配列を返す
   const attendance = monthDays.map((day) => {
     const dayAttendances = data.attendance.filter(
       (attendance) =>
@@ -68,7 +67,6 @@ export const MonthlyAttenadnce = () => {
         dayjs.tz(day).format('YYYY-MM-DD')
     )
 
-    // Todo: 該当する配列を返す
     const dayRests = data.rest.filter(
       (rest) =>
         dayjs.tz(rest.start_rest).format('YYYY-MM-DD') ===
@@ -85,7 +83,6 @@ export const MonthlyAttenadnce = () => {
       }
     }
 
-    // Todo: 配列を返す
     return {
       date: dayjs.tz(day).format('YYYY-MM-DD'),
       start_times: dayAttendances.map((dayAttendance) =>
@@ -106,8 +103,6 @@ export const MonthlyAttenadnce = () => {
       ),
     }
   })
-
-  console.log(attendance)
 
   return (
     <Box px='4'>

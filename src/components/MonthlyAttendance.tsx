@@ -1,6 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import {
   Box,
+  Center,
+  Spinner,
   Table,
   TableContainer,
   Tbody,
@@ -17,6 +19,7 @@ import {
   GetAttendanceQueryVariables,
 } from '../generated/graphql'
 import { getAttendanceQuery } from '../graphql/attendance'
+import { Header, HEADER_HEIGHT } from './common/Header'
 
 export const MonthlyAttenadnce = () => {
   const { isAuthenticated } = useAuth0()
@@ -40,50 +43,78 @@ export const MonthlyAttenadnce = () => {
     },
   })
 
-  if (fetching || !data || !isAuthenticated) return <div>loading...</div>
+  if (fetching || !data || !isAuthenticated)
+    return (
+      // Memo: Layoutで共通にしたい
+      <Box px='4'>
+        <Header />
+        <Center h={`calc(100dvh - ${HEADER_HEIGHT})`}>
+          <Spinner
+            thickness='4px'
+            speed='0.65s'
+            emptyColor='gray.200'
+            color='blue.500'
+            size='xl'
+          />
+        </Center>
+      </Box>
+    )
 
+  // Todo: 該当する配列を返す
   const attendance = monthDays.map((day) => {
-    const dayAttendance = data.attendance.find(
+    const dayAttendances = data.attendance.filter(
       (attendance) =>
         dayjs.tz(attendance.start_time).format('YYYY-MM-DD') ===
         dayjs.tz(day).format('YYYY-MM-DD')
     )
 
-    const dayRest = data.rest.find(
+    // Todo: 該当する配列を返す
+    const dayRests = data.rest.filter(
       (rest) =>
         dayjs.tz(rest.start_rest).format('YYYY-MM-DD') ===
         dayjs.tz(day).format('YYYY-MM-DD')
     )
 
-    if (!dayAttendance) {
+    if (!dayAttendances) {
       return {
         date: dayjs.tz(day).format('YYYY-MM-DD'),
-        start_time: '',
-        end_time: '',
-        start_rest: '',
-        end_rest: '',
+        start_times: [''],
+        end_times: [''],
+        start_rests: [''],
+        end_rests: [''],
       }
     }
 
+    // Todo: 配列を返す
     return {
       date: dayjs.tz(day).format('YYYY-MM-DD'),
-      start_time: dayjs.tz(dayAttendance.start_time).format('HH:mm'),
-      end_time: !!dayAttendance?.end_time
-        ? dayjs.tz(dayAttendance.end_time).format('HH:mm')
-        : '',
-      start_rest: !!dayRest?.start_rest
-        ? dayjs.tz(dayRest.start_rest).format('HH:mm')
-        : '',
-      end_rest: !!dayRest?.end_rest
-        ? dayjs.tz(dayRest.end_rest).format('HH:mm')
-        : '',
+      start_times: dayAttendances.map((dayAttendance) =>
+        dayjs.tz(dayAttendance.start_time).format('HH:mm')
+      ),
+      end_times: dayAttendances.map((dayAttendance) =>
+        !!dayAttendance?.end_time
+          ? dayjs.tz(dayAttendance.end_time).format('HH:mm')
+          : ''
+      ),
+      start_rests: dayRests.map((dayRest) =>
+        !!dayRest?.start_rest
+          ? dayjs.tz(dayRest.start_rest).format('HH:mm')
+          : ''
+      ),
+      end_rests: dayRests.map((dayRest) =>
+        !!dayRest?.end_rest ? dayjs.tz(dayRest.end_rest).format('HH:mm') : ''
+      ),
     }
   })
 
+  console.log(attendance)
+
   return (
-    <Box p='4'>
+    <Box px='4'>
+      <Header />
+
       <Text fontSize='lg'>{curentMonthStart.get('month') + 1}月の勤怠</Text>
-      <TableContainer w='50%'>
+      <TableContainer>
         <Table size='md'>
           <Thead>
             <Tr>
@@ -98,10 +129,26 @@ export const MonthlyAttenadnce = () => {
             {attendance.map((day) => (
               <Tr key={day.date}>
                 <Th>{day.date}</Th>
-                <Th>{day.start_time}</Th>
-                <Th>{day.end_time}</Th>
-                <Th>{day.start_rest}</Th>
-                <Th>{day.end_rest}</Th>
+                <Th>
+                  {day.start_times.map((start_time) => (
+                    <Text>{start_time}</Text>
+                  ))}
+                </Th>
+                <Th>
+                  {day.end_times.map((end_time) => (
+                    <Text>{end_time}</Text>
+                  ))}
+                </Th>
+                <Th>
+                  {day.start_rests.map((start_rest) => (
+                    <Text>{start_rest}</Text>
+                  ))}
+                </Th>
+                <Th>
+                  {day.end_rests.map((end_rest) => (
+                    <Text>{end_rest}</Text>
+                  ))}
+                </Th>
               </Tr>
             ))}
           </Tbody>

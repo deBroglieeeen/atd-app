@@ -11,7 +11,7 @@ export const updateUserStateMutation = /* GraphQL */ `
       }
     }
   }
-`;
+`
 
 export const getUserStateQuery = /* GraphQL */ `
   query GetUserState($user_id: String!) {
@@ -19,7 +19,7 @@ export const getUserStateQuery = /* GraphQL */ `
       state
     }
   }
-`;
+`
 
 export const getUserTimesQuery = /* GraphQL */ `
   query GetUserTimes($user_id: String!) {
@@ -42,7 +42,7 @@ export const getUserTimesQuery = /* GraphQL */ `
       end_rest
     }
   }
-`;
+`
 
 export const get3DaysDataQuery = /* GraphQL */ `
   query Get3DaysData(
@@ -50,34 +50,36 @@ export const get3DaysDataQuery = /* GraphQL */ `
     $two_days_ago: timestamptz!
     $user_id: String!
   ) {
-    attendance(where: {start_time: {_gte: $two_days_ago, _lte: $today}, user_id: {_eq: $user_id}}) {
+    attendance(
+      where: {
+        start_time: { _gte: $two_days_ago, _lte: $today }
+        user_id: { _eq: $user_id }
+      }
+    ) {
       start_time
       end_time
     }
-    rest(where: {start_rest: {_gte: $two_days_ago, _lte: $today}, user_id: {_eq: $user_id}}) {
+    rest(
+      where: {
+        start_rest: { _gte: $two_days_ago, _lte: $today }
+        user_id: { _eq: $user_id }
+      }
+    ) {
       start_rest
       end_rest
     }
   }
-`;
+`
 
 export const getCurrentMonthAttendanceQuery = /* GraphQL */ `
   query getCurrentMonthAttendance($start: timestamptz!, $end: timestamptz!) {
-    attendance(where: {start_time: {_gte: $start, _lt: $end}}) {
+    attendance(where: { start_time: { _gte: $start, _lt: $end } }) {
       start_time
       end_time
-      user {
-        id
-        name
-      }
     }
-    rest(where: {start_rest: {_gte: $start, _lt: $end}}) {
+    rest(where: { start_rest: { _gte: $start, _lt: $end } }) {
       start_rest
       end_rest
-      user {
-        id
-        name
-      }
     }
   }
 `

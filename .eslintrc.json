@@ -1,4 +1,6 @@
 {
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -7,5 +9,17 @@
     "prettier",
     "plugin:import/recommended",
     "plugin:import/typescript"
-  ]
+  ],
+  "ignorePatterns": ["next.config.js", "**/generated/*.ts"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ]
+  }
 }

@@ -777,6 +777,14 @@ export type GetAttendanceQueryVariables = Exact<{
 
 export type GetAttendanceQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', start_time: any, end_time?: any | null, user: { __typename?: 'users', id: string, name: string } }>, rest: Array<{ __typename?: 'rest', start_rest: any, end_rest?: any | null, user: { __typename?: 'users', id: string, name: string } }> };
 
+export type GetAttendanceByDateQueryVariables = Exact<{
+  start: Scalars['timestamptz'];
+  end: Scalars['timestamptz'];
+}>;
+
+
+export type GetAttendanceByDateQuery = { __typename?: 'query_root', attendance: Array<{ __typename?: 'attendance', id: any, start_time: any, end_time?: any | null }>, rest: Array<{ __typename?: 'rest', id: any, start_rest: any, end_rest?: any | null }> };
+
 export type AddRestinMutationVariables = Exact<{
   startRest: Scalars['timestamptz'];
 }>;

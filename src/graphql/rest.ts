@@ -4,7 +4,7 @@ export const addRestinMutation = /* GraphQL */ `
       id
     }
   }
-`;
+`
 
 export const updateRestoutMutation = /* GraphQL */ `
   mutation updateRestout($restId: uuid!, $endRest: timestamptz!) {
@@ -17,4 +17,4 @@ export const updateRestoutMutation = /* GraphQL */ `
       }
     }
   }
-`;
+`

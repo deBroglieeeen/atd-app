@@ -8,4 +8,4 @@ export const getUserByIdQuery = /* GraphQL */ `
       is_host
     }
   }
-`;
+`

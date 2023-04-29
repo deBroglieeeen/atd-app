@@ -42,3 +42,18 @@ export const getAttendanceQuery = /* GraphQL */ `
     }
   }
 `
+
+export const getAttendanceByDateQuery = /* GraphQL */ `
+  query getAttendanceByDate($start: timestamptz!, $end: timestamptz!) {
+    attendance(where: { start_time: { _gte: $start, _lt: $end } }) {
+      id
+      start_time
+      end_time
+    }
+    rest(where: { start_rest: { _gte: $start, _lt: $end } }) {
+      id
+      start_rest
+      end_rest
+    }
+  }
+`

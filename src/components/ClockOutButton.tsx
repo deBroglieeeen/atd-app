@@ -1,81 +1,81 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { useMutation } from "urql";
-import { Button, ButtonProps, useToast } from "@chakra-ui/react";
+import { useAuth0 } from '@auth0/auth0-react'
+import { useMutation } from 'urql'
+import { Button, ButtonProps, useToast } from '@chakra-ui/react'
 import {
   UpdateClockoutMutation,
   UpdateClockoutMutationVariables,
   UpdateUserStateMutation,
   UpdateUserStateMutationVariables,
-} from "../generated/graphql";
-import { updateClockoutMutation } from "../graphql/attendance";
-import { updateUserStateMutation } from "../graphql/userState";
-import { useTimer } from "./Clock/useTimer";
-import useSlackNotify from "./SlackNotify";
-import { useCallback } from "react";
+} from '../generated/graphql'
+import { updateClockoutMutation } from '../graphql/attendance'
+import { updateUserStateMutation } from '../graphql/userState'
+import { useTimer } from './Clock/useTimer'
+import useSlackNotify from './SlackNotify'
+import { useCallback } from 'react'
 
 type Props = ButtonProps & {
-  attendanceId: string;
-  user_id: string;
-};
+  attendanceId: string
+  user_id: string
+}
 
 const ClockOutButton = ({ attendanceId, user_id, ...props }: Props) => {
-  const clockOutTime = useTimer().format("YYYY-MM-DD HH:mm:ss");
+  const clockOutTime = useTimer().format('YYYY-MM-DD HH:mm:ss')
   const [updateClockOutResult, updateClockOut] = useMutation<
     UpdateClockoutMutation,
     UpdateClockoutMutationVariables
-  >(updateClockoutMutation);
+  >(updateClockoutMutation)
   const [updateUserStateResult, updateUserState] = useMutation<
     UpdateUserStateMutation,
     UpdateUserStateMutationVariables
-  >(updateUserStateMutation);
-  const { loginWithRedirect, user } = useAuth0();
-  const toast = useToast();
-  const slackNotify = useSlackNotify();
+  >(updateUserStateMutation)
+  const { loginWithRedirect, user } = useAuth0()
+  const toast = useToast()
+  const slackNotify = useSlackNotify()
 
   const clickClockOut = useCallback(async () => {
     if (!user) {
-      loginWithRedirect();
-      return;
+      loginWithRedirect()
+      return
     }
     try {
       const updateClockOutResult = await updateClockOut({
         attendanceId: attendanceId,
         endTime: clockOutTime,
-      });
+      })
       slackNotify({
         user_name: `${user.name}`,
         time: `${clockOutTime}`,
-        status: "end_time",
-      });
+        status: 'end_time',
+      })
       if (updateClockOutResult.error) {
-        throw new Error(updateClockOutResult.error.message);
+        throw new Error(updateClockOutResult.error.message)
       }
       const updateUserStateResult = await updateUserState({
-        user_state: "off",
+        user_state: 'off',
         user_id: user_id,
-      });
+      })
       if (updateUserStateResult.error) {
-        throw new Error(updateUserStateResult.error.message);
+        throw new Error(updateUserStateResult.error.message)
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
       toast({
-        description: "エラーが発生しました",
-        status: "error",
+        description: 'エラーが発生しました',
+        status: 'error',
         duration: 3000,
         isClosable: true,
-        position: "top",
-      });
-      return;
+        position: 'top',
+      })
+      return
     }
 
     toast({
-      description: "退勤打刻しました。",
-      status: "success",
+      description: '退勤打刻しました。',
+      status: 'success',
       duration: 3000,
       isClosable: true,
-      position: "top",
-    });
+      position: 'top',
+    })
   }, [
     attendanceId,
     clockOutTime,
@@ -86,9 +86,13 @@ const ClockOutButton = ({ attendanceId, user_id, ...props }: Props) => {
     updateUserState,
     user,
     user_id,
-  ]);
+  ])
 
-  return <Button onClick={clickClockOut} {...props}>退勤</Button>;
-};
+  return (
+    <Button onClick={clickClockOut} {...props}>
+      退勤
+    </Button>
+  )
+}
 
-export { ClockOutButton };
+export { ClockOutButton }

@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import { useEffect, useMemo } from 'react'
 import { dayjs } from '../lib/dayjs'
-import { Box, Button, Flex, Heading, Spinner, Text } from '@chakra-ui/react'
+import { Box, Flex, Spinner, Text } from '@chakra-ui/react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { ClockInButton } from './ClockInButton'
 import { ClockOutButton } from './ClockOutButton'
@@ -15,17 +15,15 @@ import {
   GetCurrentMonthAttendanceQueryVariables,
   GetUserStateQuery,
   GetUserStateQueryVariables,
+  GetUserTimesQuery,
+  GetUserTimesQueryVariables,
 } from '../generated/graphql'
 import {
   get3DaysDataQuery,
   getCurrentMonthAttendanceQuery,
   getUserStateQuery,
+  getUserTimesQuery,
 } from '../graphql/userState'
-import {
-  GetUserTimesQuery,
-  GetUserTimesQueryVariables,
-} from '../generated/graphql'
-import { getUserTimesQuery } from '../graphql/userState'
 import DayRecords from './DayRecords'
 import { DigitalClock } from './Clock/DigitalClock'
 import { userStateMap } from '../constants'

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
   Modal,
@@ -10,12 +11,14 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  VStack,
 } from '@chakra-ui/react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useAttendanceByDateQuery } from '../hooks/useAttendanceByDate'
 import { useCallback, useMemo } from 'react'
+import { dayjs } from '../lib/dayjs'
 
 const updateAttendanceSchema = z.object({
   starts: z.string().array(),
@@ -42,10 +45,18 @@ export const UpdateAttendanceModal = ({ attendanceDate, onClose }: Props) => {
       }
     // Todo: HH:mm形式に変換
     return {
-      starts: data.attendance?.map((data) => data?.start_time),
-      ends: data.attendance?.map((data) => data?.end_time),
-      rest_starts: data.rest?.map((data) => data?.start_rest),
-      rest_ends: data.rest?.map((data) => data?.end_rest),
+      starts: data.attendance?.map((data) =>
+        dayjs.tz(data?.start_time).format('HH:mm')
+      ),
+      ends: data.attendance?.map((data) =>
+        dayjs.tz(data?.end_time).format('HH:mm')
+      ),
+      rest_starts: data.rest?.map((data) =>
+        dayjs.tz(data?.start_rest).format('HH:mm')
+      ),
+      rest_ends: data.rest?.map((data) =>
+        dayjs.tz(data?.end_rest).format('HH:mm')
+      ),
     }
   }, [data])
 
@@ -111,39 +122,44 @@ const UpdateAttendanceModalForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <ModalBody>
-        {/* 各項目をuseFieldsArrayでレンダリング？？ */}
-        <FormControl>
-          <FormLabel>出勤</FormLabel>
-          {startFields.map((field, index) => (
-            <Box key={field.id}>
-              <input {...register(`starts.${index}`)} />
-            </Box>
-          ))}
-        </FormControl>
-        <FormControl>
-          <FormLabel>退勤</FormLabel>
-          {endFields.map((field, index) => (
-            <Box key={field.id}>
-              <input {...register(`ends.${index}`)} />
-            </Box>
-          ))}
-        </FormControl>
-        <FormControl>
-          <FormLabel>休憩</FormLabel>
-          {restStartFields.map((field, index) => (
-            <Box key={field.id}>
-              <input {...register(`rest_starts.${index}`)} />
-            </Box>
-          ))}
-        </FormControl>
-        <FormControl>
-          <FormLabel>戻り</FormLabel>
-          {restEndFields.map((field, index) => (
-            <Box key={field.id}>
-              <input {...register(`rest_ends.${index}`)} />
-            </Box>
-          ))}
-        </FormControl>
+        <VStack align='stretch' spacing='5' pt='2' pb='4'>
+          <Flex>
+            <FormControl>
+              <FormLabel>出勤</FormLabel>
+              {startFields.map((field, index) => (
+                <Box key={field.id}>
+                  <input {...register(`starts.${index}`)} />
+                </Box>
+              ))}
+            </FormControl>
+            <FormControl>
+              <FormLabel>退勤</FormLabel>
+              {endFields.map((field, index) => (
+                <Box key={field.id}>
+                  <input {...register(`ends.${index}`)} />
+                </Box>
+              ))}
+            </FormControl>
+          </Flex>
+          <Flex>
+            <FormControl>
+              <FormLabel>休憩</FormLabel>
+              {restStartFields.map((field, index) => (
+                <Box key={field.id}>
+                  <input {...register(`rest_starts.${index}`)} />
+                </Box>
+              ))}
+            </FormControl>
+            <FormControl>
+              <FormLabel>戻り</FormLabel>
+              {restEndFields.map((field, index) => (
+                <Box key={field.id}>
+                  <input {...register(`rest_ends.${index}`)} />
+                </Box>
+              ))}
+            </FormControl>
+          </Flex>
+        </VStack>
       </ModalBody>
       <ModalFooter
         gap='5'

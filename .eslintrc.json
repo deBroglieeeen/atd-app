@@ -11,15 +11,5 @@
     "plugin:import/typescript"
   ],
   "ignorePatterns": ["next.config.js", "**/generated/*.ts"],
-  "rules": {
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      {
-        "vars": "all",
-        "varsIgnorePattern": "^_",
-        "args": "after-used",
-        "argsIgnorePattern": "^_"
-      }
-    ]
-  }
+  "rules": {}
 }

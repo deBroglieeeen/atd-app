@@ -22,6 +22,26 @@ export const updateClockoutMutation = /* GraphQL */ `
   }
 `
 
+export const updateAttendanceMutation = /* GraphQL */ `
+  mutation updateAttendance(
+    $id: uuid!
+    $startTime: timestamptz!
+    $endTime: timestamptz!
+  ) {
+    update_attendance(
+      where: { id: { _eq: $id } }
+      _set: { start_time: $startTime, end_time: $endTime }
+    ) {
+      affected_rows
+      returning {
+        id
+        end_time
+        start_time
+      }
+    }
+  }
+`
+
 export const getAttendanceQuery = /* GraphQL */ `
   query getAttendance($start: timestamptz!, $end: timestamptz!) {
     attendance(where: { start_time: { _gte: $start, _lte: $end } }) {

@@ -71,6 +71,20 @@ export type Attendance = {
   user_id: Scalars['String'];
 };
 
+/** order by aggregate values of table "attendance" */
+export type Attendance_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Attendance_Max_Order_By>;
+  min?: InputMaybe<Attendance_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "attendance" */
+export type Attendance_Arr_Rel_Insert_Input = {
+  data: Array<Attendance_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Attendance_On_Conflict>;
+};
+
 /** Boolean expression to filter rows from the table "attendance". All fields are combined with a logical 'AND'. */
 export type Attendance_Bool_Exp = {
   _and?: InputMaybe<Array<Attendance_Bool_Exp>>;
@@ -95,6 +109,22 @@ export type Attendance_Insert_Input = {
   end_time?: InputMaybe<Scalars['timestamptz']>;
   start_time?: InputMaybe<Scalars['timestamptz']>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+};
+
+/** order by max() on columns of table "attendance" */
+export type Attendance_Max_Order_By = {
+  end_time?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  start_time?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** order by min() on columns of table "attendance" */
+export type Attendance_Min_Order_By = {
+  end_time?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  start_time?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "attendance" */
@@ -418,6 +448,20 @@ export type Rest = {
   user_id: Scalars['String'];
 };
 
+/** order by aggregate values of table "rest" */
+export type Rest_Aggregate_Order_By = {
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Rest_Max_Order_By>;
+  min?: InputMaybe<Rest_Min_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "rest" */
+export type Rest_Arr_Rel_Insert_Input = {
+  data: Array<Rest_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Rest_On_Conflict>;
+};
+
 /** Boolean expression to filter rows from the table "rest". All fields are combined with a logical 'AND'. */
 export type Rest_Bool_Exp = {
   _and?: InputMaybe<Array<Rest_Bool_Exp>>;
@@ -440,6 +484,22 @@ export type Rest_Insert_Input = {
   end_rest?: InputMaybe<Scalars['timestamptz']>;
   start_rest?: InputMaybe<Scalars['timestamptz']>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+};
+
+/** order by max() on columns of table "rest" */
+export type Rest_Max_Order_By = {
+  end_rest?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  start_rest?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+};
+
+/** order by min() on columns of table "rest" */
+export type Rest_Min_Order_By = {
+  end_rest?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  start_rest?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
 };
 
 /** response of any mutation on the table "rest" */
@@ -620,11 +680,35 @@ export type Timestamptz_Comparison_Exp = {
 /** columns and relationships of "users" */
 export type Users = {
   __typename?: 'users';
+  /** An array relationship */
+  attendances: Array<Attendance>;
   created_at: Scalars['timestamptz'];
   id: Scalars['String'];
   is_host?: Maybe<Scalars['Boolean']>;
   name: Scalars['String'];
+  /** An array relationship */
+  rests: Array<Rest>;
   state: Scalars['String'];
+};
+
+
+/** columns and relationships of "users" */
+export type UsersAttendancesArgs = {
+  distinct_on?: InputMaybe<Array<Attendance_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Attendance_Order_By>>;
+  where?: InputMaybe<Attendance_Bool_Exp>;
+};
+
+
+/** columns and relationships of "users" */
+export type UsersRestsArgs = {
+  distinct_on?: InputMaybe<Array<Rest_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Rest_Order_By>>;
+  where?: InputMaybe<Rest_Bool_Exp>;
 };
 
 /** Boolean expression to filter rows from the table "users". All fields are combined with a logical 'AND'. */
@@ -632,10 +716,12 @@ export type Users_Bool_Exp = {
   _and?: InputMaybe<Array<Users_Bool_Exp>>;
   _not?: InputMaybe<Users_Bool_Exp>;
   _or?: InputMaybe<Array<Users_Bool_Exp>>;
+  attendances?: InputMaybe<Attendance_Bool_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<String_Comparison_Exp>;
   is_host?: InputMaybe<Boolean_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
+  rests?: InputMaybe<Rest_Bool_Exp>;
   state?: InputMaybe<String_Comparison_Exp>;
 };
 
@@ -646,8 +732,10 @@ export type Users_Constraint =
 
 /** input type for inserting data into table "users" */
 export type Users_Insert_Input = {
+  attendances?: InputMaybe<Attendance_Arr_Rel_Insert_Input>;
   is_host?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
+  rests?: InputMaybe<Rest_Arr_Rel_Insert_Input>;
   state?: InputMaybe<Scalars['String']>;
 };
 
@@ -676,10 +764,12 @@ export type Users_On_Conflict = {
 
 /** Ordering options when selecting data from "users". */
 export type Users_Order_By = {
+  attendances_aggregate?: InputMaybe<Attendance_Aggregate_Order_By>;
   created_at?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   is_host?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
+  rests_aggregate?: InputMaybe<Rest_Aggregate_Order_By>;
   state?: InputMaybe<Order_By>;
 };
 
@@ -769,6 +859,15 @@ export type UpdateClockoutMutationVariables = Exact<{
 
 export type UpdateClockoutMutation = { __typename?: 'mutation_root', update_attendance?: { __typename?: 'attendance_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'attendance', user_id: string, end_time?: any | null, start_time: any }> } | null };
 
+export type UpdateAttendanceMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  startTime: Scalars['timestamptz'];
+  endTime: Scalars['timestamptz'];
+}>;
+
+
+export type UpdateAttendanceMutation = { __typename?: 'mutation_root', update_attendance?: { __typename?: 'attendance_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'attendance', id: any, end_time?: any | null, start_time: any }> } | null };
+
 export type GetAttendanceQueryVariables = Exact<{
   start: Scalars['timestamptz'];
   end: Scalars['timestamptz'];
@@ -799,6 +898,15 @@ export type UpdateRestoutMutationVariables = Exact<{
 
 
 export type UpdateRestoutMutation = { __typename?: 'mutation_root', update_rest?: { __typename?: 'rest_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'rest', user_id: string, end_rest?: any | null, start_rest: any }> } | null };
+
+export type UpdateRestMutationVariables = Exact<{
+  id: Scalars['uuid'];
+  startRest: Scalars['timestamptz'];
+  endRest: Scalars['timestamptz'];
+}>;
+
+
+export type UpdateRestMutation = { __typename?: 'mutation_root', update_rest?: { __typename?: 'rest_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'rest', id: any, end_rest?: any | null, start_rest: any }> } | null };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2209,6 +2317,72 @@ export default {
         "name": "users",
         "fields": [
           {
+            "name": "attendances",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "attendance",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "distinct_on",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "limit",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "offset",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "order_by",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "where",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
             "name": "created_at",
             "type": {
               "kind": "NON_NULL",
@@ -2248,6 +2422,72 @@ export default {
               }
             },
             "args": []
+          },
+          {
+            "name": "rests",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "rest",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "distinct_on",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "limit",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "offset",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "order_by",
+                "type": {
+                  "kind": "LIST",
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Any"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "where",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
           },
           {
             "name": "state",

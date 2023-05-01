@@ -18,3 +18,23 @@ export const updateRestoutMutation = /* GraphQL */ `
     }
   }
 `
+
+export const updateRestMutation = /* GraphQL */ `
+  mutation updateRest(
+    $id: uuid!
+    $startRest: timestamptz!
+    $endRest: timestamptz!
+  ) {
+    update_rest(
+      where: { id: { _eq: $id } }
+      _set: { start_rest: $startRest, end_rest: $endRest }
+    ) {
+      affected_rows
+      returning {
+        id
+        end_rest
+        start_rest
+      }
+    }
+  }
+`

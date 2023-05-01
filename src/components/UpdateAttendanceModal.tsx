@@ -11,6 +11,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  useToast,
   VStack,
 } from '@chakra-ui/react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -19,12 +20,53 @@ import * as z from 'zod'
 import { useAttendanceByDateQuery } from '../hooks/useAttendanceByDate'
 import { useCallback, useMemo } from 'react'
 import { dayjs } from '../lib/dayjs'
+import { useMutation } from 'urql'
+import {
+  UpdateAttendanceMutation,
+  UpdateAttendanceMutationVariables,
+  UpdateRestMutation,
+  UpdateRestMutationVariables,
+} from '../generated/graphql'
+import { updateAttendanceMutation } from '../graphql/attendance'
+import { updateRestMutation } from '../graphql/rest'
 
 const updateAttendanceSchema = z.object({
-  starts: z.string().array(),
-  ends: z.string().array(),
-  rest_starts: z.string().array(),
-  rest_ends: z.string().array(),
+  attendances: z.array(
+    z.object({
+      id: z.string(),
+      date: z.string().nullable(),
+      start_time: z
+        .string()
+        .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
+          message: '形式が正しくありません',
+        })
+        .nullable(),
+      end_time: z
+        .string()
+        .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
+          message: '形式が正しくありません',
+        })
+        .nullable(),
+    })
+  ),
+  rests: z.array(
+    z.object({
+      id: z.string(),
+      date: z.string().nullable(),
+      start_rest: z
+        .string()
+        .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
+          message: '形式が正しくありません',
+        })
+        .nullable(),
+      end_rest: z
+        .string()
+        .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
+          message: '形式が正しくありません',
+        })
+        .nullable(),
+    })
+  ),
 })
 type UpdateAttendanceSchema = z.infer<typeof updateAttendanceSchema>
 
@@ -38,25 +80,35 @@ export const UpdateAttendanceModal = ({ attendanceDate, onClose }: Props) => {
   const defaulatValues: UpdateAttendanceSchema = useMemo(() => {
     if (!data)
       return {
-        starts: [],
-        ends: [],
-        rest_starts: [],
-        rest_ends: [],
+        attendances: [],
+        rests: [],
       }
-    // Todo: HH:mm形式に変換
+
     return {
-      starts: data.attendance?.map((data) =>
-        dayjs.tz(data?.start_time).format('HH:mm')
-      ),
-      ends: data.attendance?.map((data) =>
-        dayjs.tz(data?.end_time).format('HH:mm')
-      ),
-      rest_starts: data.rest?.map((data) =>
-        dayjs.tz(data?.start_rest).format('HH:mm')
-      ),
-      rest_ends: data.rest?.map((data) =>
-        dayjs.tz(data?.end_rest).format('HH:mm')
-      ),
+      attendances: data.attendance?.map((data) => ({
+        id: data.id,
+        date: data?.start_time
+          ? dayjs.tz(data.start_time).format('YYYY-MM-DD')
+          : null,
+        start_time: data?.start_time
+          ? dayjs.tz(data.start_time).format('HH:mm')
+          : null,
+        end_time: data?.end_time
+          ? dayjs.tz(data.end_time).format('HH:mm')
+          : null,
+      })),
+      rests: data.rest?.map((data) => ({
+        id: data?.id,
+        date: data?.start_rest
+          ? dayjs.tz(data.start_rest).format('YYYY-MM-DD')
+          : null,
+        start_rest: data?.start_rest
+          ? dayjs.tz(data.start_rest).format('HH:mm')
+          : null,
+        end_rest: data?.end_rest
+          ? dayjs.tz(data.end_rest).format('HH:mm')
+          : null,
+      })),
     }
   }, [data])
 
@@ -87,6 +139,15 @@ const UpdateAttendanceModalForm = ({
   defaultValues: UpdateAttendanceSchema
   onClose: () => void
 }) => {
+  const toast = useToast({ position: 'top' })
+  const [attendanceResult, updateAttendance] = useMutation<
+    UpdateAttendanceMutation,
+    UpdateAttendanceMutationVariables
+  >(updateAttendanceMutation)
+  const [restResult, updateRest] = useMutation<
+    UpdateRestMutation,
+    UpdateRestMutationVariables
+  >(updateRestMutation)
   const {
     handleSubmit,
     control,
@@ -98,27 +159,84 @@ const UpdateAttendanceModalForm = ({
     defaultValues: defaultValues,
   })
 
-  const { fields: startFields } = useFieldArray<UpdateAttendanceSchema>({
+  // console.log(errors)
+
+  const { fields: attendanceFields } = useFieldArray<UpdateAttendanceSchema>({
     control,
-    name: 'starts' as never,
+    name: 'attendances',
   })
-  const { fields: endFields } = useFieldArray<UpdateAttendanceSchema>({
+  const { fields: restFields } = useFieldArray<UpdateAttendanceSchema>({
     control,
-    name: 'ends' as never,
-  })
-  const { fields: restStartFields } = useFieldArray<UpdateAttendanceSchema>({
-    control,
-    name: 'rest_starts' as never,
-  })
-  const { fields: restEndFields } = useFieldArray<UpdateAttendanceSchema>({
-    control,
-    name: 'rest_ends' as never,
+    name: 'rests',
   })
 
-  const onSubmit = useCallback((data: UpdateAttendanceSchema) => {
-    console.log(data)
-    return ''
-  }, [])
+  const onSubmit = useCallback(
+    async (data: UpdateAttendanceSchema) => {
+      await Promise.all([
+        data.attendances
+          .filter((attendance) => attendance.date)
+          .map((attendance) => {
+            updateAttendance({
+              id: attendance.id,
+              startTime: attendance.start_time
+                ? dayjs
+                    .tz(attendance.date)
+                    .hour(parseInt(attendance.start_time.split(':')[0], 10))
+                    .minute(parseInt(attendance.start_time.split(':')[1], 10))
+                    .format('YYYY-MM-DD HH:mm:ss')
+                : null,
+              endTime: attendance.end_time
+                ? dayjs
+                    .tz(attendance.date)
+                    .hour(parseInt(attendance.end_time.split(':')[0], 10))
+                    .minute(parseInt(attendance.end_time.split(':')[1], 10))
+                    .format('YYYY-MM-DD HH:mm:ss')
+                : null,
+            })
+          }),
+        data.rests
+          .filter((rest) => rest.date)
+          .map((rest) => {
+            updateRest({
+              id: rest.id,
+              startRest: rest.start_rest
+                ? dayjs
+                    .tz(rest.date)
+                    .hour(parseInt(rest.start_rest.split(':')[0], 10))
+                    .minute(parseInt(rest.start_rest.split(':')[1], 10))
+                    .format('YYYY-MM-DD HH:mm:ss')
+                : null,
+              endRest: rest.end_rest
+                ? dayjs
+                    .tz(rest.date)
+                    .hour(parseInt(rest.end_rest.split(':')[0], 10))
+                    .minute(parseInt(rest.end_rest.split(':')[1], 10))
+                    .format('YYYY-MM-DD HH:mm:ss')
+                : null,
+            })
+          }),
+      ])
+        .then(() => {
+          toast({
+            title: '勤怠を更新しました',
+            status: 'success',
+          })
+          onClose()
+        })
+        .catch((e) => {
+          toast({
+            title: '勤怠を更新できませんでした',
+            status: 'error',
+          })
+          console.log(e)
+        })
+        .finally(() => {
+          console.log('finally')
+          return
+        })
+    },
+    [onClose, toast, updateAttendance, updateRest]
+  )
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <ModalBody>
@@ -126,17 +244,17 @@ const UpdateAttendanceModalForm = ({
           <Flex>
             <FormControl>
               <FormLabel>出勤</FormLabel>
-              {startFields.map((field, index) => (
+              {attendanceFields.map((field, index) => (
                 <Box key={field.id}>
-                  <input {...register(`starts.${index}`)} />
+                  <input {...register(`attendances.${index}.start_time`)} />
                 </Box>
               ))}
             </FormControl>
             <FormControl>
               <FormLabel>退勤</FormLabel>
-              {endFields.map((field, index) => (
+              {attendanceFields.map((field, index) => (
                 <Box key={field.id}>
-                  <input {...register(`ends.${index}`)} />
+                  <input {...register(`attendances.${index}.end_time`)} />
                 </Box>
               ))}
             </FormControl>
@@ -144,17 +262,17 @@ const UpdateAttendanceModalForm = ({
           <Flex>
             <FormControl>
               <FormLabel>休憩</FormLabel>
-              {restStartFields.map((field, index) => (
+              {restFields.map((field, index) => (
                 <Box key={field.id}>
-                  <input {...register(`rest_starts.${index}`)} />
+                  <input {...register(`rests.${index}.start_rest`)} />
                 </Box>
               ))}
             </FormControl>
             <FormControl>
               <FormLabel>戻り</FormLabel>
-              {restEndFields.map((field, index) => (
+              {restFields.map((field, index) => (
                 <Box key={field.id}>
-                  <input {...register(`rest_ends.${index}`)} />
+                  <input {...register(`rests.${index}.end_rest`)} />
                 </Box>
               ))}
             </FormControl>

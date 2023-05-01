@@ -1,5 +1,5 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import React from "react";
+import { useAuth0 } from '@auth0/auth0-react'
+import React from 'react'
 import {
   cacheExchange,
   createClient,
@@ -8,15 +8,15 @@ import {
   fetchExchange,
   Operation,
   Provider,
-} from "urql";
-import { fromPromise, fromValue, map, mergeMap, pipe } from "wonka";
-import { API_HOST } from "../config/server";
+} from 'urql'
+import { fromPromise, fromValue, map, mergeMap, pipe } from 'wonka'
+import { API_HOST } from '../config/server'
 type Props = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
 const AuthorizedUrqlProvider: React.FC<Props> = ({ children }) => {
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0()
 
   const fetchOptionsExchange =
     (fn: any): Exchange =>
@@ -25,20 +25,20 @@ const AuthorizedUrqlProvider: React.FC<Props> = ({ children }) => {
       return pipe(
         ops$,
         mergeMap((operation: Operation) => {
-          const result = fn(operation.context.fetchOptions);
+          const result = fn(operation.context.fetchOptions)
           return pipe(
-            (typeof result.then === "function"
+            (typeof result.then === 'function'
               ? fromPromise(result)
               : fromValue(result)) as any,
             map((fetchOptions: RequestInit | (() => RequestInit)) => ({
               ...operation,
               context: { ...operation.context, fetchOptions },
             }))
-          );
+          )
         }),
         forward
-      );
-    };
+      )
+    }
 
   const client = createClient({
     url: API_HOST,
@@ -46,7 +46,7 @@ const AuthorizedUrqlProvider: React.FC<Props> = ({ children }) => {
       dedupExchange,
       cacheExchange,
       fetchOptionsExchange(async (fetchOptions: any) => {
-        const token = await getAccessTokenSilently().catch(() => null);
+        const token = await getAccessTokenSilently().catch(() => null)
 
         return Promise.resolve({
           ...fetchOptions,
@@ -55,13 +55,13 @@ const AuthorizedUrqlProvider: React.FC<Props> = ({ children }) => {
                 Authorization: `Bearer ${token}`,
               }
             : {},
-        });
+        })
       }),
       fetchExchange,
     ],
-  });
+  })
 
-  return <Provider value={client}>{children}</Provider>;
-};
+  return <Provider value={client}>{children}</Provider>
+}
 
-export { AuthorizedUrqlProvider };
+export { AuthorizedUrqlProvider }

@@ -170,6 +170,8 @@ const UpdateAttendanceModalForm = ({
 
   const onSubmit = useCallback(
     async (data: UpdateAttendanceSchema) => {
+      // Memo: hasura + graphqlCodegenを使って動的なObjectに対して、bulk updateができなかったため
+      //       一旦、一つずつupdateする形をpromise allで実装
       await Promise.all([
         data.attendances
           .filter((attendance) => attendance.date)

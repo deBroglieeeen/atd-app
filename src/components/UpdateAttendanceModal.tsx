@@ -159,8 +159,6 @@ const UpdateAttendanceModalForm = ({
     defaultValues: defaultValues,
   })
 
-  // console.log(errors)
-
   const { fields: attendanceFields } = useFieldArray<UpdateAttendanceSchema>({
     control,
     name: 'attendances',
@@ -223,15 +221,13 @@ const UpdateAttendanceModalForm = ({
           })
           onClose()
         })
-        .catch((e) => {
+        .catch(() => {
           toast({
             title: '勤怠を更新できませんでした',
             status: 'error',
           })
-          console.log(e)
         })
         .finally(() => {
-          console.log('finally')
           return
         })
     },
@@ -241,6 +237,7 @@ const UpdateAttendanceModalForm = ({
     <form onSubmit={handleSubmit(onSubmit)}>
       <ModalBody>
         <VStack align='stretch' spacing='5' pt='2' pb='4'>
+          {/* Todo: html構造変えてerror表示することやUIを見やすくする */}
           <Flex>
             <FormControl>
               <FormLabel>出勤</FormLabel>

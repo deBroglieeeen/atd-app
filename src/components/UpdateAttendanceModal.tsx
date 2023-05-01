@@ -34,7 +34,8 @@ const updateAttendanceSchema = z.object({
   attendances: z.array(
     z.object({
       id: z.string(),
-      date: z.string().nullable(),
+      start_date: z.string().nullable(),
+      end_date: z.string().nullable(),
       start_time: z
         .string()
         .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
@@ -52,7 +53,8 @@ const updateAttendanceSchema = z.object({
   rests: z.array(
     z.object({
       id: z.string(),
-      date: z.string().nullable(),
+      start_date: z.string().nullable(),
+      end_date: z.string().nullable(),
       start_rest: z
         .string()
         .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
@@ -87,8 +89,11 @@ export const UpdateAttendanceModal = ({ attendanceDate, onClose }: Props) => {
     return {
       attendances: data.attendance?.map((data) => ({
         id: data.id,
-        date: data?.start_time
+        start_date: data?.start_time
           ? dayjs.tz(data.start_time).format('YYYY-MM-DD')
+          : null,
+        end_date: data?.end_time
+          ? dayjs.tz(data.end_time).format('YYYY-MM-DD')
           : null,
         start_time: data?.start_time
           ? dayjs.tz(data.start_time).format('HH:mm')
@@ -99,8 +104,11 @@ export const UpdateAttendanceModal = ({ attendanceDate, onClose }: Props) => {
       })),
       rests: data.rest?.map((data) => ({
         id: data?.id,
-        date: data?.start_rest
+        start_date: data?.start_rest
           ? dayjs.tz(data.start_rest).format('YYYY-MM-DD')
+          : null,
+        end_date: data?.end_rest
+          ? dayjs.tz(data.end_rest).format('YYYY-MM-DD')
           : null,
         start_rest: data?.start_rest
           ? dayjs.tz(data.start_rest).format('HH:mm')
@@ -174,45 +182,47 @@ const UpdateAttendanceModalForm = ({
       //       一旦、一つずつupdateする形をpromise allで実装
       await Promise.all([
         data.attendances
-          .filter((attendance) => attendance.date)
+          .filter((attendance) => attendance.start_date)
           .map((attendance) => {
             updateAttendance({
               id: attendance.id,
               startTime: attendance.start_time
                 ? dayjs
-                    .tz(attendance.date)
+                    .tz(attendance.start_date)
                     .hour(parseInt(attendance.start_time.split(':')[0], 10))
                     .minute(parseInt(attendance.start_time.split(':')[1], 10))
                     .format('YYYY-MM-DD HH:mm:ss')
                 : null,
-              endTime: attendance.end_time
-                ? dayjs
-                    .tz(attendance.date)
-                    .hour(parseInt(attendance.end_time.split(':')[0], 10))
-                    .minute(parseInt(attendance.end_time.split(':')[1], 10))
-                    .format('YYYY-MM-DD HH:mm:ss')
-                : null,
+              endTime:
+                attendance.end_time && attendance.end_date
+                  ? dayjs
+                      .tz(attendance.end_date)
+                      .hour(parseInt(attendance.end_time.split(':')[0], 10))
+                      .minute(parseInt(attendance.end_time.split(':')[1], 10))
+                      .format('YYYY-MM-DD HH:mm:ss')
+                  : null,
             })
           }),
         data.rests
-          .filter((rest) => rest.date)
+          .filter((rest) => rest.start_date)
           .map((rest) => {
             updateRest({
               id: rest.id,
               startRest: rest.start_rest
                 ? dayjs
-                    .tz(rest.date)
+                    .tz(rest.start_date)
                     .hour(parseInt(rest.start_rest.split(':')[0], 10))
                     .minute(parseInt(rest.start_rest.split(':')[1], 10))
                     .format('YYYY-MM-DD HH:mm:ss')
                 : null,
-              endRest: rest.end_rest
-                ? dayjs
-                    .tz(rest.date)
-                    .hour(parseInt(rest.end_rest.split(':')[0], 10))
-                    .minute(parseInt(rest.end_rest.split(':')[1], 10))
-                    .format('YYYY-MM-DD HH:mm:ss')
-                : null,
+              endRest:
+                rest.end_rest && rest.end_date
+                  ? dayjs
+                      .tz(rest.end_date)
+                      .hour(parseInt(rest.end_rest.split(':')[0], 10))
+                      .minute(parseInt(rest.end_rest.split(':')[1], 10))
+                      .format('YYYY-MM-DD HH:mm:ss')
+                  : null,
             })
           }),
       ])

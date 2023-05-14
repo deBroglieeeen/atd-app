@@ -11,8 +11,6 @@ import { useQuery } from 'urql'
 import {
   Get3DaysDataQuery,
   Get3DaysDataQueryVariables,
-  GetCurrentMonthAttendanceQuery,
-  GetCurrentMonthAttendanceQueryVariables,
   GetUserStateQuery,
   GetUserStateQueryVariables,
   GetUserTimesQuery,
@@ -20,7 +18,6 @@ import {
 } from '../generated/graphql'
 import {
   get3DaysDataQuery,
-  getCurrentMonthAttendanceQuery,
   getUserStateQuery,
   getUserTimesQuery,
 } from '../graphql/userState'
@@ -28,6 +25,7 @@ import DayRecords from './DayRecords'
 import { DigitalClock } from './Clock/DigitalClock'
 import { userStateMap } from '../constants'
 import { Header } from './common/Header'
+import { WorkingTime } from './WorkingTime'
 
 const TopPage: NextPage = () => {
   const days = {
@@ -66,63 +64,9 @@ const TopPage: NextPage = () => {
       user_id: user?.sub || '',
     },
   })
-
-  const startMonth = useMemo(() => {
-    const month = dayjs().date() >= 11 ? dayjs().month() : dayjs().month() - 1
-    return dayjs().month(month).startOf('month').format('YYYY-MM-11')
-  }, [])
-  const endMonth = useMemo(() => {
+  const currentMonth = useMemo(() => {
     const month = dayjs().date() >= 11 ? dayjs().month() + 1 : dayjs().month()
-    return dayjs().month(month).endOf('month').format('YYYY-MM-10')
-  }, [])
-
-  const [{ data: currentMonthAttendance }] = useQuery<
-    GetCurrentMonthAttendanceQuery,
-    GetCurrentMonthAttendanceQueryVariables
-  >({
-    query: getCurrentMonthAttendanceQuery,
-    variables: {
-      start: startMonth,
-      end: endMonth,
-    },
-  })
-
-  // Memo: テーブルの持ち方を変えればこの計算は不要になる
-  const totalWorkingTime = useMemo(() => {
-    if (!currentMonthAttendance) return 0
-
-    const totalAttendance = currentMonthAttendance.attendance
-      .filter((attendance) => !!attendance.end_time)
-      .map((attendance) => {
-        const start = dayjs(attendance.start_time)
-        const end = dayjs(attendance.end_time)
-        return end.diff(start)
-      })
-      .reduce((a, b) => a + b, 0)
-
-    const totalRest = currentMonthAttendance.rest
-      .filter((rest) => !!rest.end_rest)
-      .map((rest) => {
-        const start = dayjs(rest.start_rest)
-        const end = dayjs(rest.end_rest)
-        return end.diff(start)
-      })
-      .reduce((a, b) => a + b, 0)
-
-    return totalAttendance - totalRest
-  }, [currentMonthAttendance])
-
-  const formatTotalWorkingTime = useMemo(() => {
-    const HOUR = 24
-    const totalHours =
-      dayjs.duration(totalWorkingTime).days() * HOUR +
-      dayjs.duration(totalWorkingTime).hours()
-    return `${totalHours}時間${dayjs.duration(totalWorkingTime).minutes()}分`
-  }, [totalWorkingTime])
-
-  const paidDate = useMemo(() => {
-    const month = dayjs().date() >= 11 ? dayjs().month() + 1 : dayjs().month()
-    return dayjs().month(month)
+    return month
   }, [])
 
   const daysDataMemo = useMemo(
@@ -158,15 +102,9 @@ const TopPage: NextPage = () => {
     <Box px='4'>
       <Header />
       <Box>{user ? `(ユーザー:${user?.name}${user.sub})` : null}</Box>
-      <Box py='2'>
-        <Text as='span' fontWeight='bold'>
-          {paidDate.format('YYYY')}年{paidDate.format('MM')}月
-        </Text>
-        分の稼働:&nbsp;
-        <Text as='span' fontWeight='bold'>
-          {formatTotalWorkingTime}
-        </Text>
-      </Box>
+      <WorkingTime targetMonth={currentMonth - 1} />
+      <WorkingTime targetMonth={currentMonth} />
+
       <Text color={`${user_state?.users_by_pk?.state}`}>
         {userStateMap.get(`${user_state?.users_by_pk?.state}`)}
       </Text>

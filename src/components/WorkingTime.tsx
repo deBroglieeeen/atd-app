@@ -4,9 +4,9 @@ import { useQuery } from 'urql'
 import {
   GetCurrentMonthAttendanceQuery,
   GetCurrentMonthAttendanceQueryVariables,
-} from '../generated/graphql'
-import { getCurrentMonthAttendanceQuery } from '../graphql/userState'
-import { dayjs } from '../lib/dayjs'
+} from '@/generated/graphql'
+import { getCurrentMonthAttendanceQuery } from '@/graphql/userState'
+import { dayjs } from '@/lib/dayjs'
 
 type Props = {
   targetMonth: number

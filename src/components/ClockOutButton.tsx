@@ -6,9 +6,9 @@ import {
   UpdateClockoutMutationVariables,
   UpdateUserStateMutation,
   UpdateUserStateMutationVariables,
-} from '../generated/graphql'
-import { updateClockoutMutation } from '../graphql/attendance'
-import { updateUserStateMutation } from '../graphql/userState'
+} from '@/generated/graphql'
+import { updateClockoutMutation } from '@/graphql/attendance'
+import { updateUserStateMutation } from '@/graphql/userState'
 import { useTimer } from './Clock/useTimer'
 import useSlackNotify from './SlackNotify'
 import { useCallback } from 'react'

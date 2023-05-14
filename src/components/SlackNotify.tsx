@@ -1,4 +1,4 @@
-import { attendanceMap } from '../constants'
+import { attendanceMap } from '@/constants'
 
 type Props = {
   user_name: string

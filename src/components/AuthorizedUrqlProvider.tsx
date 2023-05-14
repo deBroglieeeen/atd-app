@@ -10,7 +10,7 @@ import {
   Provider,
 } from 'urql'
 import { fromPromise, fromValue, map, mergeMap, pipe } from 'wonka'
-import { API_HOST } from '../config/server'
+import { API_HOST } from '@/config/server'
 type Props = {
   children: React.ReactNode
 }

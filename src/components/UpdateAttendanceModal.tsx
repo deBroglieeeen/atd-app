@@ -16,19 +16,19 @@ import {
 } from '@chakra-ui/react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { useAttendanceByDateQuery } from '../hooks/useAttendanceByDate'
+import { z } from 'zod'
+import { useAttendanceByDateQuery } from '@/hooks/useAttendanceByDate'
 import { useCallback, useMemo } from 'react'
-import { dayjs } from '../lib/dayjs'
+import { dayjs } from '@/lib/dayjs'
 import { useMutation } from 'urql'
 import {
   UpdateAttendanceMutation,
   UpdateAttendanceMutationVariables,
   UpdateRestMutation,
   UpdateRestMutationVariables,
-} from '../generated/graphql'
-import { updateAttendanceMutation } from '../graphql/attendance'
-import { updateRestMutation } from '../graphql/rest'
+} from '@/generated/graphql'
+import { updateAttendanceMutation } from '@/graphql/attendance'
+import { updateRestMutation } from '@/graphql/rest'
 
 const updateAttendanceSchema = z.object({
   attendances: z.array(

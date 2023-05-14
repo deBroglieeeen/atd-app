@@ -4,10 +4,10 @@ import {
   AddRestinMutationVariables,
   UpdateUserStateMutation,
   UpdateUserStateMutationVariables,
-} from '../generated/graphql'
-import { addRestinMutation } from '../graphql/rest'
+} from '@/generated/graphql'
+import { addRestinMutation } from '@/graphql/rest'
 
-import { updateUserStateMutation } from '../graphql/userState'
+import { updateUserStateMutation } from '@/graphql/userState'
 import { useMutation } from 'urql'
 import { Button, ButtonProps, useToast } from '@chakra-ui/react'
 import { useTimer } from './Clock/useTimer'

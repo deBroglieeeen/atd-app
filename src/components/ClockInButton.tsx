@@ -5,10 +5,10 @@ import {
   AddClockinMutationVariables,
   UpdateUserStateMutation,
   UpdateUserStateMutationVariables,
-} from '../generated/graphql'
-import { addClockinMutation } from '../graphql/attendance'
+} from '@/generated/graphql'
+import { addClockinMutation } from '@/graphql/attendance'
 
-import { updateUserStateMutation } from '../graphql/userState'
+import { updateUserStateMutation } from '@/graphql/userState'
 import { useMutation } from 'urql'
 import { Button, ButtonProps, useToast } from '@chakra-ui/react'
 import { useTimer } from './Clock/useTimer'

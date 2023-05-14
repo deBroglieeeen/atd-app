@@ -12,14 +12,14 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react'
-import { dayjs } from '../lib/dayjs'
+import { dayjs } from '@/lib/dayjs'
 import { useCallback, useMemo, useState } from 'react'
 import { useQuery } from 'urql'
 import {
   GetAttendanceQuery,
   GetAttendanceQueryVariables,
-} from '../generated/graphql'
-import { getAttendanceQuery } from '../graphql/attendance'
+} from '@/generated/graphql'
+import { getAttendanceQuery } from '@/graphql/attendance'
 import { Header, HEADER_HEIGHT } from './common/Header'
 import { UpdateAttendanceModal } from './UpdateAttendanceModal'
 

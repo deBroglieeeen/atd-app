@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { MonthlyAttenadnce } from '../../components/MonthlyAttendance'
+import { MonthlyAttenadnce } from '@/components/MonthlyAttendance'
 
 const Attendance: NextPage = () => {
   return <MonthlyAttenadnce />

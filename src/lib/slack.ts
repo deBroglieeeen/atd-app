@@ -1,5 +1,5 @@
 import { IncomingWebhook } from '@slack/webhook'
-import { SLACK_WEBHOOK_URL } from '../config/server'
+import { SLACK_WEBHOOK_URL } from '@/config/server'
 
 const slack = {
   sendToSlack: async (text: string) => {

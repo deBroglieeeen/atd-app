@@ -1,10 +1,10 @@
-import { dayjs } from '../lib/dayjs'
+import { dayjs } from '@/lib/dayjs'
 import { useQuery } from 'urql'
 import {
   GetAttendanceByDateQuery,
   GetAttendanceByDateQueryVariables,
-} from '../generated/graphql'
-import { getAttendanceByDateQuery } from '../graphql/attendance'
+} from '@/generated/graphql'
+import { getAttendanceByDateQuery } from '@/graphql/attendance'
 
 export const useAttendanceByDateQuery = (date: string) => {
   const start_date = dayjs(date).format('YYYY-MM-DD')

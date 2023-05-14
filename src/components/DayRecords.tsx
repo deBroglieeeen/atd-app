@@ -1,5 +1,5 @@
 import { Box, Text } from '@chakra-ui/react'
-import { attendanceMap } from '../constants/index'
+import { attendanceMap } from '@/constants/index'
 
 type Props = {
   day: string

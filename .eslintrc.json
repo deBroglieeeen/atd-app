@@ -1,6 +1,6 @@
 {
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "import-alias"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -11,5 +11,13 @@
     "plugin:import/typescript"
   ],
   "ignorePatterns": ["next.config.js", "**/generated/*.ts"],
-  "rules": {}
+  "rules": {
+    "import-alias/import-alias": [
+      "warn",
+      {
+        "relativeDepth": 0,
+        "aliases": [{ "alias": "@", "matcher": "^src" }]
+      }
+    ]
+  }
 }

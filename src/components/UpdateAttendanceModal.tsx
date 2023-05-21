@@ -148,14 +148,14 @@ const UpdateAttendanceModalForm = ({
   onClose: () => void
 }) => {
   const toast = useToast({ position: 'top' })
-  const [attendanceResult, updateAttendance] = useMutation<
+  const updateAttendance = useMutation<
     UpdateAttendanceMutation,
     UpdateAttendanceMutationVariables
-  >(updateAttendanceMutation)
-  const [restResult, updateRest] = useMutation<
+  >(updateAttendanceMutation)[1]
+  const updateRest = useMutation<
     UpdateRestMutation,
     UpdateRestMutationVariables
-  >(updateRestMutation)
+  >(updateRestMutation)[1]
   const {
     handleSubmit,
     control,

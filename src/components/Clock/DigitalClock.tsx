@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { Text } from '@chakra-ui/react'
-import { useTimer } from './useTimer'
+import { useTimer } from '@/hooks/useTimer'
 
 const DigitalClock = () => {
   const time = useTimer()

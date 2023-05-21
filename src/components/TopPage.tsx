@@ -1,4 +1,3 @@
-import { NextPage } from 'next'
 import { useEffect, useMemo } from 'react'
 import { dayjs } from '@/lib/dayjs'
 import { Box, Flex, Spinner, Text } from '@chakra-ui/react'
@@ -27,7 +26,7 @@ import { userStateMap } from '@/constants'
 import { Header } from './common/Header'
 import { WorkingTime } from './WorkingTime'
 
-const TopPage: NextPage = () => {
+export const TopPage = () => {
   const days = {
     sub_today: `${dayjs.utc().add(1, 'day')}`,
     today: `${dayjs.utc().format('YYYY-MM-DD')}`,
@@ -135,5 +134,3 @@ const TopPage: NextPage = () => {
     </Box>
   )
 }
-
-export default TopPage

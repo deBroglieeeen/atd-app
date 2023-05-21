@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import slack from '../../lib/slack'
+import slack from '@/lib/slack'
 
 module.exports = async (req: NextApiRequest, res: NextApiResponse) => {
   const { message } = req.body

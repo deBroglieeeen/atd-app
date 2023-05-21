@@ -10,7 +10,7 @@ import { addRestinMutation } from '@/graphql/rest'
 import { updateUserStateMutation } from '@/graphql/userState'
 import { useMutation } from 'urql'
 import { Button, ButtonProps, useToast } from '@chakra-ui/react'
-import { useTimer } from './Clock/useTimer'
+import { useTimer } from '@/hooks/useTimer'
 import useSlackNotify from './SlackNotify'
 import { useCallback } from 'react'
 
@@ -21,14 +21,13 @@ type Props = ButtonProps & {
 const RestInButton = ({ user_id, ...props }: Props) => {
   const restInTime = useTimer().format('YYYY-MM-DD HH:mm:ss')
 
-  const [addRestInResult, addRestIn] = useMutation<
-    AddRestinMutation,
-    AddRestinMutationVariables
-  >(addRestinMutation)
-  const [updateUserStateResult, updateUserState] = useMutation<
+  const addRestIn = useMutation<AddRestinMutation, AddRestinMutationVariables>(
+    addRestinMutation
+  )[1]
+  const updateUserState = useMutation<
     UpdateUserStateMutation,
     UpdateUserStateMutationVariables
-  >(updateUserStateMutation)
+  >(updateUserStateMutation)[1]
   const { loginWithRedirect, user } = useAuth0()
   const toast = useToast()
   const slackNotify = useSlackNotify()

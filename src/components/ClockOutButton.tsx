@@ -9,7 +9,7 @@ import {
 } from '@/generated/graphql'
 import { updateClockoutMutation } from '@/graphql/attendance'
 import { updateUserStateMutation } from '@/graphql/userState'
-import { useTimer } from './Clock/useTimer'
+import { useTimer } from '@/hooks/useTimer'
 import useSlackNotify from './SlackNotify'
 import { useCallback } from 'react'
 
@@ -20,14 +20,14 @@ type Props = ButtonProps & {
 
 const ClockOutButton = ({ attendanceId, user_id, ...props }: Props) => {
   const clockOutTime = useTimer().format('YYYY-MM-DD HH:mm:ss')
-  const [updateClockOutResult, updateClockOut] = useMutation<
+  const updateClockOut = useMutation<
     UpdateClockoutMutation,
     UpdateClockoutMutationVariables
-  >(updateClockoutMutation)
-  const [updateUserStateResult, updateUserState] = useMutation<
+  >(updateClockoutMutation)[1]
+  const updateUserState = useMutation<
     UpdateUserStateMutation,
     UpdateUserStateMutationVariables
-  >(updateUserStateMutation)
+  >(updateUserStateMutation)[1]
   const { loginWithRedirect, user } = useAuth0()
   const toast = useToast()
   const slackNotify = useSlackNotify()

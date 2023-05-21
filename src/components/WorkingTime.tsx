@@ -7,11 +7,13 @@ import {
 } from '@/generated/graphql'
 import { getCurrentMonthAttendanceQuery } from '@/graphql/userState'
 import { dayjs } from '@/lib/dayjs'
+import { useFormatTotalWorkingTime } from '@/hooks/useFormatTotalWorkingTime'
 
 type Props = {
   targetMonth: number
 }
 export const WorkingTime = ({ targetMonth }: Props) => {
+  const formatTotalWorkingTime = useFormatTotalWorkingTime()
   const startMonth = useMemo(() => {
     return dayjs()
       .month(targetMonth - 1)
@@ -58,14 +60,6 @@ export const WorkingTime = ({ targetMonth }: Props) => {
     return totalAttendance - totalRest
   }, [currentMonthAttendance])
 
-  const formatTotalWorkingTime = useMemo(() => {
-    const HOUR = 24
-    const totalHours =
-      dayjs.duration(totalWorkingTime).days() * HOUR +
-      dayjs.duration(totalWorkingTime).hours()
-    return `${totalHours}時間${dayjs.duration(totalWorkingTime).minutes()}分`
-  }, [totalWorkingTime])
-
   const paidDate = useMemo(() => {
     return dayjs().month(targetMonth)
   }, [targetMonth])
@@ -77,7 +71,7 @@ export const WorkingTime = ({ targetMonth }: Props) => {
       </Text>
       分の稼働:&nbsp;
       <Text as='span' fontWeight='bold'>
-        {formatTotalWorkingTime}
+        {formatTotalWorkingTime(totalWorkingTime)}
       </Text>
     </Box>
   )

@@ -22,11 +22,24 @@ import {
 import { getAttendanceQuery } from '@/graphql/attendance'
 import { Header, HEADER_HEIGHT } from './common/Header'
 import { UpdateAttendanceModal } from './UpdateAttendanceModal'
+import { useFormatTotalWorkingTime } from '@/hooks/useFormatTotalWorkingTime'
+
+type AttendanceTable = {
+  id: number
+  date: string
+  start_times: string[]
+  end_times: string[]
+  start_rests: string[]
+  end_rests: string[]
+  total_time: number
+}
 
 export const MonthlyAttenadnce = () => {
   const { isAuthenticated } = useAuth0()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedDate, setSelectedDate] = useState('')
+  const formatTotalWorkingTime = useFormatTotalWorkingTime()
+
   const curentMonthStart = dayjs().startOf('month')
   const currentMonthEnd = dayjs().endOf('month')
   const monthDays = useMemo(() => {
@@ -47,7 +60,33 @@ export const MonthlyAttenadnce = () => {
     },
   })
 
-  const attendance = useMemo(
+  const sumWorkingTime = (
+    dayAttendances: GetAttendanceQuery['attendance'],
+    dayRests: GetAttendanceQuery['rest']
+  ) => {
+    if (!dayAttendances) return 0
+    const totalAttendance = dayAttendances
+      .filter((attendance) => !!attendance.end_time)
+      .map((attendance) => {
+        const start = dayjs(attendance.start_time)
+        const end = dayjs(attendance.end_time)
+        return end.diff(start)
+      })
+      .reduce((acc, cur) => acc + cur, 0)
+
+    const totalRest = dayRests
+      .filter((rest) => !!rest.end_rest)
+      .map((rest) => {
+        const start = dayjs(rest.start_rest)
+        const end = dayjs(rest.end_rest)
+        return end.diff(start)
+      })
+      .reduce((a, b) => a + b, 0)
+
+    return totalAttendance - totalRest
+  }
+
+  const attendance: AttendanceTable[] = useMemo(
     () =>
       monthDays.map((day, i) => {
         const dayAttendances =
@@ -68,10 +107,11 @@ export const MonthlyAttenadnce = () => {
           return {
             id: i,
             date: dayjs.tz(day).format('YYYY-MM-DD'),
-            start_times: [''],
-            end_times: [''],
-            start_rests: [''],
-            end_rests: [''],
+            start_times: [],
+            end_times: [],
+            start_rests: [],
+            end_rests: [],
+            total_time: 0,
           }
         }
 
@@ -94,6 +134,7 @@ export const MonthlyAttenadnce = () => {
           end_rests: dayRests.map((dayRest) =>
             dayRest?.end_rest ? dayjs.tz(dayRest.end_rest).format('HH:mm') : ''
           ),
+          total_time: sumWorkingTime(dayAttendances, dayRests),
         }
       }),
     [data, monthDays]
@@ -146,6 +187,7 @@ export const MonthlyAttenadnce = () => {
               <Th>退勤</Th>
               <Th>休憩</Th>
               <Th>戻り</Th>
+              <Th>合計</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -180,6 +222,10 @@ export const MonthlyAttenadnce = () => {
                   {day.end_rests.map((end_rest) => (
                     <Text key={end_rest}>{end_rest}</Text>
                   ))}
+                </Th>
+                <Th py='5'>
+                  {day.total_time !== 0 &&
+                    formatTotalWorkingTime(day.total_time)}
                 </Th>
               </Tr>
             ))}

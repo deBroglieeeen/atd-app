@@ -4,7 +4,7 @@ import { useTimer } from '@/hooks/useTimer'
 
 const DigitalClock = () => {
   const time = useTimer()
-  return <Text fontSize='3xl'>{dayjs(time).format('HH : mm : ss')}</Text>
+  return <Text fontSize='3xl'>{dayjs(time).format('HH : mm')}</Text>
 }
 
 export { DigitalClock }

@@ -69,7 +69,12 @@ export const WorkingTime = ({ targetMonth }: Props) => {
       <Text as='span' fontWeight='bold'>
         {paidDate.format('YYYY')}年{paidDate.format('MM')}月
       </Text>
-      分の稼働:&nbsp;
+      分
+      <Text as='span' fontSize='sm'>
+        ({paidDate.subtract(1, 'M').format('MM/11')} ~{' '}
+        {paidDate.format('MM/10')})
+      </Text>
+      の稼働:&nbsp;
       <Text as='span' fontWeight='bold'>
         {formatTotalWorkingTime(totalWorkingTime)}
       </Text>

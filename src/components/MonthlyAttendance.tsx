@@ -2,6 +2,9 @@ import { useAuth0 } from '@auth0/auth0-react'
 import {
   Box,
   Center,
+  Flex,
+  Select,
+  Skeleton,
   Spinner,
   Table,
   TableContainer,
@@ -11,6 +14,7 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  VStack,
 } from '@chakra-ui/react'
 import { dayjs } from '@/lib/dayjs'
 import { useCallback, useMemo, useState } from 'react'
@@ -23,6 +27,8 @@ import { getAttendanceQuery } from '@/graphql/attendance'
 import { Header, HEADER_HEIGHT } from './common/Header'
 import { UpdateAttendanceModal } from './UpdateAttendanceModal'
 import { useFormatTotalWorkingTime } from '@/hooks/useFormatTotalWorkingTime'
+
+type Mode = 'monthly' | 'paid_date'
 
 type AttendanceTable = {
   id: number
@@ -39,13 +45,23 @@ export const MonthlyAttenadnce = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedDate, setSelectedDate] = useState('')
   const formatTotalWorkingTime = useFormatTotalWorkingTime()
+  const [mode, setMode] = useState<Mode>('monthly')
 
-  const curentMonthStart = dayjs().startOf('month')
-  const currentMonthEnd = dayjs().endOf('month')
+  const { curentMonthStart, currentMonthEnd } = useMemo(() => {
+    if (mode === 'monthly') {
+      const curentMonthStart = dayjs().startOf('month')
+      const currentMonthEnd = dayjs().endOf('month')
+      return { curentMonthStart, currentMonthEnd }
+    }
+    const curentMonthStart = dayjs().subtract(1, 'month').date(11)
+    const currentMonthEnd = dayjs().date(10)
+    return { curentMonthStart, currentMonthEnd }
+  }, [mode])
+
   const monthDays = useMemo(() => {
     const days = currentMonthEnd.diff(curentMonthStart, 'day') + 1
     return [...Array(days)].map((_, i) => {
-      return dayjs().date(i + 1)
+      return curentMonthStart.add(i, 'day').format('YYYY-MM-DD')
     })
   }, [curentMonthStart, currentMonthEnd])
 
@@ -60,31 +76,34 @@ export const MonthlyAttenadnce = () => {
     },
   })
 
-  const sumWorkingTime = (
-    dayAttendances: GetAttendanceQuery['attendance'],
-    dayRests: GetAttendanceQuery['rest']
-  ) => {
-    if (!dayAttendances) return 0
-    const totalAttendance = dayAttendances
-      .filter((attendance) => !!attendance.end_time)
-      .map((attendance) => {
-        const start = dayjs(attendance.start_time)
-        const end = dayjs(attendance.end_time)
-        return end.diff(start)
-      })
-      .reduce((acc, cur) => acc + cur, 0)
+  const sumWorkingTime = useCallback(
+    (
+      dayAttendances: GetAttendanceQuery['attendance'],
+      dayRests: GetAttendanceQuery['rest']
+    ) => {
+      if (!dayAttendances) return 0
+      const totalAttendance = dayAttendances
+        .filter((attendance) => !!attendance.end_time)
+        .map((attendance) => {
+          const start = dayjs(attendance.start_time)
+          const end = dayjs(attendance.end_time)
+          return end.diff(start)
+        })
+        .reduce((acc, cur) => acc + cur, 0)
 
-    const totalRest = dayRests
-      .filter((rest) => !!rest.end_rest)
-      .map((rest) => {
-        const start = dayjs(rest.start_rest)
-        const end = dayjs(rest.end_rest)
-        return end.diff(start)
-      })
-      .reduce((a, b) => a + b, 0)
+      const totalRest = dayRests
+        .filter((rest) => !!rest.end_rest)
+        .map((rest) => {
+          const start = dayjs(rest.start_rest)
+          const end = dayjs(rest.end_rest)
+          return end.diff(start)
+        })
+        .reduce((a, b) => a + b, 0)
 
-    return totalAttendance - totalRest
-  }
+      return totalAttendance - totalRest
+    },
+    []
+  )
 
   const attendance: AttendanceTable[] = useMemo(
     () =>
@@ -137,7 +156,7 @@ export const MonthlyAttenadnce = () => {
           total_time: sumWorkingTime(dayAttendances, dayRests),
         }
       }),
-    [data, monthDays]
+    [data?.attendance, data?.rest, monthDays, sumWorkingTime]
   )
 
   const handleOpenModal = useCallback(
@@ -153,7 +172,7 @@ export const MonthlyAttenadnce = () => {
     onClose()
   }, [setSelectedDate, onClose])
 
-  if (fetching || !data || !isAuthenticated)
+  if (!isAuthenticated)
     return (
       // Memo: Layoutで共通にしたい
       <Box px='4'>
@@ -173,70 +192,106 @@ export const MonthlyAttenadnce = () => {
   return (
     <Box px='4'>
       <Header />
-      <Text fontSize='lg'>{curentMonthStart.get('month') + 1}月の勤怠</Text>
-      <TableContainer
-        position='relative'
-        h='calc(100dvh - 110px)'
-        overflowY='scroll'
-      >
-        <Table size='md'>
-          <Thead position='sticky' top='0' bgColor='gray.200' boxShadow='md'>
-            <Tr>
-              <Th>日付</Th>
-              <Th>出勤</Th>
-              <Th>退勤</Th>
-              <Th>休憩</Th>
-              <Th>戻り</Th>
-              <Th>合計</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {attendance.map((day) => (
-              <Tr
-                key={day.id}
-                // aタグやめたい
-                as='a'
-                display='table-row'
-                cursor='pointer'
-                _hover={{ bgColor: 'gray.50' }}
-                _active={{ bgColor: 'gray.100' }}
-                onClick={() => handleOpenModal(day.date)}
+      <Flex justifyContent='space-between' py='2'>
+        <Text fontSize='lg'>{curentMonthStart.get('month') + 1}月の勤怠</Text>
+        <Box>
+          <Select
+            onChange={(e) => {
+              switch (e.target.value) {
+                case 'monthly':
+                case 'paid_date':
+                  setMode(e.target.value)
+                  break
+                default:
+                  setMode('monthly')
+                  break
+              }
+            }}
+          >
+            <option value='monthly'>月基準</option>
+            <option value='paid_date'>給与基準</option>
+          </Select>
+        </Box>
+      </Flex>
+      {fetching || !data ? (
+        <VStack align='stretch' spacing={2}>
+          <Skeleton h='10' />
+          {[...Array(30)].map((_, i) => (
+            <Skeleton key={i} h='12' />
+          ))}
+        </VStack>
+      ) : (
+        <>
+          <TableContainer
+            position='relative'
+            h='calc(100dvh - 110px)'
+            overflowY='scroll'
+          >
+            <Table size='md'>
+              <Thead
+                position='sticky'
+                top='0'
+                bgColor='gray.200'
+                boxShadow='md'
               >
-                <Th py='5'>{day.date}</Th>
-                <Th py='5'>
-                  {day.start_times.map((start_time) => (
-                    <Text key={start_time}>{start_time}</Text>
-                  ))}
-                </Th>
-                <Th py='5'>
-                  {day.end_times.map((end_time) => (
-                    <Text key={end_time}>{end_time}</Text>
-                  ))}
-                </Th>
-                <Th py='5'>
-                  {day.start_rests.map((start_rest) => (
-                    <Text key={start_rest}>{start_rest}</Text>
-                  ))}
-                </Th>
-                <Th py='5'>
-                  {day.end_rests.map((end_rest) => (
-                    <Text key={end_rest}>{end_rest}</Text>
-                  ))}
-                </Th>
-                <Th py='5'>
-                  {day.total_time !== 0 &&
-                    formatTotalWorkingTime(day.total_time)}
-                </Th>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      {isOpen && (
-        <UpdateAttendanceModal
-          attendanceDate={selectedDate}
-          onClose={handleCloseModal}
-        />
+                <Tr>
+                  <Th>日付</Th>
+                  <Th>出勤</Th>
+                  <Th>退勤</Th>
+                  <Th>休憩</Th>
+                  <Th>戻り</Th>
+                  <Th>合計</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {attendance.map((day) => (
+                  <Tr
+                    key={day.id}
+                    // aタグやめたい
+                    as='a'
+                    display='table-row'
+                    cursor='pointer'
+                    _hover={{ bgColor: 'gray.50' }}
+                    _active={{ bgColor: 'gray.100' }}
+                    onClick={() => handleOpenModal(day.date)}
+                  >
+                    <Th py='5'>{day.date}</Th>
+                    <Th py='5'>
+                      {day.start_times.map((start_time) => (
+                        <Text key={start_time}>{start_time}</Text>
+                      ))}
+                    </Th>
+                    <Th py='5'>
+                      {day.end_times.map((end_time) => (
+                        <Text key={end_time}>{end_time}</Text>
+                      ))}
+                    </Th>
+                    <Th py='5'>
+                      {day.start_rests.map((start_rest) => (
+                        <Text key={start_rest}>{start_rest}</Text>
+                      ))}
+                    </Th>
+                    <Th py='5'>
+                      {day.end_rests.map((end_rest) => (
+                        <Text key={end_rest}>{end_rest}</Text>
+                      ))}
+                    </Th>
+                    <Th py='5'>
+                      {day.total_time !== 0 &&
+                        formatTotalWorkingTime(day.total_time)}
+                    </Th>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+          {isOpen && (
+            <UpdateAttendanceModal
+              attendanceDate={selectedDate}
+              onClose={handleCloseModal}
+            />
+          )}
+        </>
       )}
     </Box>
   )

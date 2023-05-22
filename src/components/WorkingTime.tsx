@@ -8,21 +8,14 @@ import {
 import { getCurrentMonthAttendanceQuery } from '@/graphql/userState'
 import { dayjs } from '@/lib/dayjs'
 import { useFormatTotalWorkingTime } from '@/hooks/useFormatTotalWorkingTime'
+import { useGetPaidDateSpan } from '@/hooks/useGetPaidDateSpan'
 
 type Props = {
   targetMonth: number
 }
 export const WorkingTime = ({ targetMonth }: Props) => {
   const formatTotalWorkingTime = useFormatTotalWorkingTime()
-  const startMonth = useMemo(() => {
-    return dayjs()
-      .month(targetMonth - 1)
-      .startOf('month')
-      .format('YYYY-MM-11')
-  }, [targetMonth])
-  const endMonth = useMemo(() => {
-    return dayjs().month(targetMonth).endOf('month').format('YYYY-MM-10')
-  }, [targetMonth])
+  const { startDate, endDate } = useGetPaidDateSpan({ targetMonth })
 
   const [{ data: currentMonthAttendance }] = useQuery<
     GetCurrentMonthAttendanceQuery,
@@ -30,8 +23,8 @@ export const WorkingTime = ({ targetMonth }: Props) => {
   >({
     query: getCurrentMonthAttendanceQuery,
     variables: {
-      start: startMonth,
-      end: endMonth,
+      start: startDate,
+      end: endDate,
     },
   })
 

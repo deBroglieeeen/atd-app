@@ -19,7 +19,7 @@ type Props = ButtonProps & {
 }
 
 const ClockOutButton = ({ attendanceId, user_id, ...props }: Props) => {
-  const clockOutTime = useTimer().format('YYYY-MM-DD HH:mm:ss')
+  const clockOutTime = useTimer().format('YYYY-MM-DD HH:mm')
   const updateClockOut = useMutation<
     UpdateClockoutMutation,
     UpdateClockoutMutationVariables

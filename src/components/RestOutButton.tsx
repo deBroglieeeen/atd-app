@@ -19,7 +19,7 @@ type Props = ButtonProps & {
 }
 
 const RestOutButton = ({ restId, user_id, ...props }: Props) => {
-  const restOutTime = useTimer().format('YYYY-MM-DD HH:mm:ss')
+  const restOutTime = useTimer().format('YYYY-MM-DD HH:mm')
   const updateRestOut = useMutation<
     UpdateRestoutMutation,
     UpdateRestoutMutationVariables

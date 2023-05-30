@@ -19,7 +19,7 @@ type Props = ButtonProps & {
 }
 
 const RestInButton = ({ user_id, ...props }: Props) => {
-  const restInTime = useTimer().format('YYYY-MM-DD HH:mm:ss')
+  const restInTime = useTimer().format('YYYY-MM-DD HH:mm')
 
   const addRestIn = useMutation<AddRestinMutation, AddRestinMutationVariables>(
     addRestinMutation

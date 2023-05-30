@@ -191,7 +191,7 @@ const UpdateAttendanceModalForm = ({
                     .tz(attendance.start_date)
                     .hour(parseInt(attendance.start_time.split(':')[0], 10))
                     .minute(parseInt(attendance.start_time.split(':')[1], 10))
-                    .format('YYYY-MM-DD HH:mm:ss')
+                    .format('YYYY-MM-DD HH:mm')
                 : null,
               endTime:
                 attendance.end_time && attendance.end_date
@@ -199,7 +199,7 @@ const UpdateAttendanceModalForm = ({
                       .tz(attendance.end_date)
                       .hour(parseInt(attendance.end_time.split(':')[0], 10))
                       .minute(parseInt(attendance.end_time.split(':')[1], 10))
-                      .format('YYYY-MM-DD HH:mm:ss')
+                      .format('YYYY-MM-DD HH:mm')
                   : null,
             })
           }),
@@ -213,7 +213,7 @@ const UpdateAttendanceModalForm = ({
                     .tz(rest.start_date)
                     .hour(parseInt(rest.start_rest.split(':')[0], 10))
                     .minute(parseInt(rest.start_rest.split(':')[1], 10))
-                    .format('YYYY-MM-DD HH:mm:ss')
+                    .format('YYYY-MM-DD HH:mm')
                 : null,
               endRest:
                 rest.end_rest && rest.end_date
@@ -221,7 +221,7 @@ const UpdateAttendanceModalForm = ({
                       .tz(rest.end_date)
                       .hour(parseInt(rest.end_rest.split(':')[0], 10))
                       .minute(parseInt(rest.end_rest.split(':')[1], 10))
-                      .format('YYYY-MM-DD HH:mm:ss')
+                      .format('YYYY-MM-DD HH:mm')
                   : null,
             })
           }),

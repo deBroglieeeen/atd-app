@@ -19,7 +19,7 @@ type Props = ButtonProps & {
 }
 
 const ClockInButton = ({ user_id, ...props }: Props) => {
-  const clockInTime = useTimer().format('YYYY-MM-DD HH:mm:ss')
+  const clockInTime = useTimer().format('YYYY-MM-DD HH:mm')
   const addClockIn = useMutation<
     AddClockinMutation,
     AddClockinMutationVariables

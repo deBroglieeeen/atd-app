@@ -17,6 +17,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       clientId={AUTH0_CLIENT_ID}
       audience={AUTH0_API_AUDIENCE}
       redirectUri={AUTH0_REDIRECT_URI}
+      cacheLocation='localstorage'
+      useRefreshTokens={true}
     >
       <ChakraProvider theme={theme}>
         <AuthorizedUrqlProvider>
